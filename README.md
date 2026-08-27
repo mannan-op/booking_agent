@@ -77,7 +77,14 @@ To run this project, you will need to add the following environment variables to
 ```
 API_KEY=
 ANOTHER_API_KEY=
+N8N_WEBHOOK_URL=http://localhost:5678/webhook-test/battery-query
 ```
+
+## Live Chat Integration
+
+The authenticated `/chat` page sends customer messages to `/api/chat`, which forwards them server-side to the n8n webhook. Set `N8N_WEBHOOK_URL` in `.env.local` to the n8n test URL while developing, or the production URL after Workflow 1 is activated.
+
+When n8n runs in Docker and the mock middleware runs on Windows, configure n8n HTTP Request nodes with `http://host.docker.internal:8000`. Start the mock middleware from `workflows/mock-middleware-api` and verify `http://localhost:8000/v1/health` before testing the chat.
 
 ## Features
 

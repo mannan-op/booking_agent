@@ -8,37 +8,37 @@
             {
               "id": "26b435df-4892-4073-80d8-8de527abbcda",
               "name": "conversation_id",
-              "value": "f6923d37-7c21-4450-9050-1ee3835cebcf",
+              "value": "={{ $json.conversation_id }}",
               "type": "string"
             },
             {
               "id": "9f790b2f-77ba-46b5-a640-671defd6c191",
               "name": "product_id",
-              "value": "BAT-001",
+              "value": "={{ $json.product_id }}",
               "type": "string"
             },
             {
               "id": "7490fa79-0e9e-45d4-b396-f10be2901d9a",
               "name": "model",
-              "value": "HT03XL",
+              "value": "={{ $json.model }}",
               "type": "string"
             },
             {
               "id": "ba0121d4-5ec5-4599-8aca-29e78b9e9c5c",
               "name": "price",
-              "value": "4500",
+              "value": "={{ $json.price }}",
               "type": "string"
             },
             {
               "id": "2be2446d-7426-494b-b92e-d4cfa0c1f42c",
               "name": "quantity",
-              "value": "1",
+              "value": "={{ $json.quantity }}",
               "type": "string"
             },
             {
               "id": "30130f65-6888-4bca-90a4-e8874ce6e8d5",
               "name": "intent",
-              "value": "ORDER_CONFIRMATION",
+              "value": "={{ $json.intent }}",
               "type": "string"
             }
           ]

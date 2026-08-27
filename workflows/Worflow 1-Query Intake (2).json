@@ -38,7 +38,7 @@
             {
               "id": "b5b79993-5899-49f6-8fef-29e71012aaca",
               "name": "content_type",
-              "value": "=text",
+              "value": "={{ $json.body.content_type || ($json.body.image_url ? 'image' : 'text') }}",
               "type": "string"
             }
           ]
@@ -233,7 +233,7 @@
       "parameters": {
         "httpMethod": "POST",
         "path": "battery-query",
-        "responseMode": "responseNode",
+        "responseMode": "lastNode",
         "options": {}
       },
       "type": "n8n-nodes-base.webhook",
@@ -260,7 +260,7 @@
           "value": {
             "conversation_id": "={{ $json.conversation_id }}",
             "message_id": "={{ $json.message_id }}",
-            "raw_text": "={{ $json.raw_text }}",
+            "raw_text": "={{ $json.text }}",
             "image_url": "={{ $json.image_url }}"
           },
           "matchingColumns": [],
@@ -336,7 +336,10 @@
         "columns": {
           "mappingMode": "defineBelow",
           "value": {
-            "id": 0
+            "conversation_id": "={{ $('03 — Prepare Idempotency').item.json.conversation_id }}",
+            "reason_code": "DUPLICATE_MESSAGE",
+            "payload": "={{ JSON.stringify($('03 — Prepare Idempotency').item.json) }}",
+            "status": "duplicate"
           },
           "matchingColumns": [
             "id"

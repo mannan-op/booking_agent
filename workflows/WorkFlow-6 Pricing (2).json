@@ -134,7 +134,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const salesData = $input.first().json;\nconst config = $('Select_From_Price_Config').first().json; // your pricing_config node\n\nlet price;\nif (config.formula_type === 'average') {\n  price = salesData.average_price;\n} else if (config.formula_type === 'median') {\n  price = salesData.median_price;\n}\n\nif (config.markup_percent) {\n  price = price * (1 + config.markup_percent / 100);\n}\n\nreturn [{\n  json: {\n    price: Math.round(price),\n    pricing_window_used: '30_day',\n    sample_size: salesData.sample_size\n  }\n}];"
+        "jsCode": "const salesData = $input.first().json;\nconst config = $('Select_From_Price_Config').first().json;\nconst prices = (salesData.sales || [])\n  .map((sale) => Number(sale.sale_price))\n  .filter((value) => Number.isFinite(value));\n\nlet price;\nif (config.formula_type === 'average') {\n  price = prices.reduce((sum, value) => sum + value, 0) / prices.length;\n} else if (config.formula_type === 'median') {\n  const sorted = [...prices].sort((left, right) => left - right);\n  const middle = Math.floor(sorted.length / 2);\n  price = sorted.length % 2 === 0\n    ? (sorted[middle - 1] + sorted[middle]) / 2\n    : sorted[middle];\n}\n\nif (config.markup_percent) {\n  price = price * (1 + Number(config.markup_percent) / 100);\n}\n\nreturn [{\n  json: {\n    price: Math.round(price),\n    pricing_window_used: '30_day',\n    sample_size: prices.length\n  }\n}];"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,

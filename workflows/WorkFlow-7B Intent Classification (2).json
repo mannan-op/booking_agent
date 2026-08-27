@@ -789,9 +789,6 @@
             }
           ]
         },
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "\n{\n  \"model\": \"{{ $json.model }}\"\n}\n",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
