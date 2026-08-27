@@ -1,0 +1,829 @@
+{
+  "name": "WorkFlow-8 Order Creation+Branch Routing",
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "26b435df-4892-4073-80d8-8de527abbcda",
+              "name": "conversation_id",
+              "value": "={{ $json.conversation_id }}",
+              "type": "string"
+            },
+            {
+              "id": "9f790b2f-77ba-46b5-a640-671defd6c191",
+              "name": "product_id",
+              "value": "={{ $json.product_id }}",
+              "type": "string"
+            },
+            {
+              "id": "7490fa79-0e9e-45d4-b396-f10be2901d9a",
+              "name": "model",
+              "value": "={{ $json.model }}",
+              "type": "string"
+            },
+            {
+              "id": "ba0121d4-5ec5-4599-8aca-29e78b9e9c5c",
+              "name": "price",
+              "value": "={{ $json.price }}",
+              "type": "string"
+            },
+            {
+              "id": "2be2446d-7426-494b-b92e-d4cfa0c1f42c",
+              "name": "quantity",
+              "value": "={{ $json.quantity }}",
+              "type": "string"
+            },
+            {
+              "id": "30130f65-6888-4bca-90a4-e8874ce6e8d5",
+              "name": "intent",
+              "value": "={{ $json.intent }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        416,
+        0
+      ],
+      "id": "e1eb9638-9611-4e83-a567-72208fbb7b0d",
+      "name": "Set"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT * FROM orders\nWHERE conversation_id = '{{ $json.conversation_id }}'\nAND product_id = '{{ $json.product_id }}'\nAND status = 'pending'\nLIMIT 1;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        640,
+        0
+      ],
+      "id": "67ce0921-75f4-4929-b52e-e1ddfaec8656",
+      "name": "Select From Orders table",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "41xuS6HMVz5ZwsAI",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "d86e0f99-9d9b-492f-8ba5-20b759c6b01a",
+              "leftValue": "={{ Object.keys($json).length }}",
+              "rightValue": "0",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        864,
+        0
+      ],
+      "id": "ca554d32-af1a-403f-8c24-3d0ed5c41817",
+      "name": "If order has been confirmed before?"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b28600f2-b69a-4132-b63a-6446928bd467",
+              "name": "duplicate",
+              "value": true,
+              "type": "boolean"
+            },
+            {
+              "id": "c43bd83a-628e-4437-9bd9-3a7975877e1f",
+              "name": "order_id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "d65971b0-1530-4c81-81f8-a1c4cb97f6be",
+              "name": "",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1536,
+        -96
+      ],
+      "id": "f40dbd11-af9d-49ad-896b-69d3ee287950",
+      "name": "Marked as Duplicated"
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "orders",
+          "mode": "list",
+          "cachedResultName": "orders"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "conversation_id": "={{ $('Set').item.json.conversation_id }}",
+            "product_id": "={{ $('Set').item.json.product_id }}",
+            "model": "={{ $('Set').item.json.model }}",
+            "branch_id": "=",
+            "quantity": "={{ $('Set').item.json.quantity }}",
+            "price": "={{ $('Set').item.json.price }}",
+            "status": "pending"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "conversation_id",
+              "displayName": "conversation_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "product_id",
+              "displayName": "product_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "model",
+              "displayName": "model",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "branch_id",
+              "displayName": "branch_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "quantity",
+              "displayName": "quantity",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "price",
+              "displayName": "price",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        1088,
+        96
+      ],
+      "id": "af827ddf-44e6-46da-8816-17e8a5120c99",
+      "name": "Add to Orders Table",
+      "credentials": {
+        "postgres": {
+          "id": "41xuS6HMVz5ZwsAI",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT * FROM branch_routing_rules ORDER BY priority ASC LIMIT 1;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        1312,
+        96
+      ],
+      "id": "be673ed4-fea1-4251-95af-05d2569e0bf1",
+      "name": "Set Branch Routing Rules",
+      "credentials": {
+        "postgres": {
+          "id": "41xuS6HMVz5ZwsAI",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE orders SET branch_id = '{{ $json.branch_id }}', status = 'confirmed' \nWHERE conversation_id = '{{ $('Set').item.json.conversation_id }}' \nAND product_id = '{{ $('Set').item.json.product_id }}' \nAND status = 'pending';",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        1536,
+        96
+      ],
+      "id": "53aaa5ca-fc58-4307-92c1-f3a01421da2f",
+      "name": "Update Order",
+      "credentials": {
+        "postgres": {
+          "id": "41xuS6HMVz5ZwsAI",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1760,
+        0
+      ],
+      "id": "ca7457dd-dff9-46e9-affa-2a2ab3d63ae0",
+      "name": "Merge the data",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1811df00-5723-4143-af13-4ba97e15842f",
+              "name": "branch_notification",
+              "value": "=Order routed to: {{ $json.branch_name || 'Hafeez Center' }} Product: {{ $('Set').item.json.model }} Quantity: {{ $('Set').item.json.quantity }} }}",
+              "type": "string"
+            },
+            {
+              "id": "c761ab9d-f6c6-4696-948b-9b570f86ce3f",
+              "name": "reply_type",
+              "value": "order_confirmed",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1984,
+        0
+      ],
+      "id": "a3d46f23-7804-4c69-9b4b-485a87ae8c88",
+      "name": "Branch Notification"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "19f1a6ad-4ed2-4e43-b9d1-ff63d7f3f95b",
+              "name": "customer_message",
+              "value": "=Order {{ $('Add to Orders Table').item.json.id }} confirmed ✅ {{ $('Set').item.json.model }} x {{ $('Set').item.json.quantity }}We'll contact you shortly for delivery/pickup details.",
+              "type": "string"
+            },
+            {
+              "id": "a839f0e8-7ebc-4dbe-84b1-ea86d667b79d",
+              "name": "reply_type",
+              "value": "={{ $json.reply_type }}",
+              "type": "string"
+            },
+            {
+              "id": "fc0a1149-eaed-44dd-ae98-7bb113b089f9",
+              "name": "",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        2208,
+        0
+      ],
+      "id": "60ab4388-a675-42d3-8b4a-88b00bf9d769",
+      "name": "Customer Confirmation Message"
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "messages",
+          "mode": "list",
+          "cachedResultName": "messages"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "confidence": 0,
+            "message_id": "={{ 'MSG-' + Date.now() }}",
+            "conversation_id": "={{ $('Set').item.json.conversation_id }}",
+            "direction": "outbound",
+            "content_type": "text",
+            "raw_text": "={{ $json.customer_message }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "message_id",
+              "displayName": "message_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "conversation_id",
+              "displayName": "conversation_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "direction",
+              "displayName": "direction",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "content_type",
+              "displayName": "content_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "raw_text",
+              "displayName": "raw_text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "image_url",
+              "displayName": "image_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ai_payload",
+              "displayName": "ai_payload",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "object",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "confidence",
+              "displayName": "confidence",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        2432,
+        0
+      ],
+      "id": "394c0468-2d34-40ce-8fd5-9eb998ba441a",
+      "name": "Log to messages",
+      "credentials": {
+        "postgres": {
+          "id": "41xuS6HMVz5ZwsAI",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "event_log",
+          "mode": "list",
+          "cachedResultName": "event_log"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "conversation_id": "={{ $('Set').item.json.conversation_id }}",
+            "workflow_name": "WorkFlow 8",
+            "status": "success",
+            "details": "={{ JSON.stringify($json) }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "correlation_id",
+              "displayName": "correlation_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "conversation_id",
+              "displayName": "conversation_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "workflow_name",
+              "displayName": "workflow_name",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "details",
+              "displayName": "details",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "object",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        2656,
+        0
+      ],
+      "id": "84229768-23be-4fb0-bfd7-e7d17aa3f9ea",
+      "name": "Log to event_log",
+      "credentials": {
+        "postgres": {
+          "id": "41xuS6HMVz5ZwsAI",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "conversation_id"
+            },
+            {
+              "name": "product_id"
+            },
+            {
+              "name": "model"
+            },
+            {
+              "name": "price",
+              "type": "number"
+            },
+            {
+              "name": "quantity"
+            },
+            {
+              "name": "intent"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        192,
+        0
+      ],
+      "id": "ca8b5883-1a72-4833-8604-36e5cc6bce7b",
+      "name": "Executed by 7B Intent Classification"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Set": {
+      "main": [
+        [
+          {
+            "node": "Select From Orders table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select From Orders table": {
+      "main": [
+        [
+          {
+            "node": "If order has been confirmed before?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If order has been confirmed before?": {
+      "main": [
+        [
+          {
+            "node": "Marked as Duplicated",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Add to Orders Table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Marked as Duplicated": {
+      "main": [
+        [
+          {
+            "node": "Merge the data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add to Orders Table": {
+      "main": [
+        [
+          {
+            "node": "Set Branch Routing Rules",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Branch Routing Rules": {
+      "main": [
+        [
+          {
+            "node": "Update Order",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Order": {
+      "main": [
+        [
+          {
+            "node": "Merge the data",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge the data": {
+      "main": [
+        [
+          {
+            "node": "Branch Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Branch Notification": {
+      "main": [
+        [
+          {
+            "node": "Customer Confirmation Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Customer Confirmation Message": {
+      "main": [
+        [
+          {
+            "node": "Log to messages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log to messages": {
+      "main": [
+        [
+          {
+            "node": "Log to event_log",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Executed by 7B Intent Classification": {
+      "main": [
+        [
+          {
+            "node": "Set",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "8e78efc6-f8e0-4e70-ba86-a276c498afb3",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "926f7712c13f878bfbbed3a3b14e61e5e04a958f45ea9ded2157a41f131ea22b"
+  },
+  "nodeGroups": [],
+  "id": "XUVkqUN00VgsNhQW",
+  "tags": []
+}

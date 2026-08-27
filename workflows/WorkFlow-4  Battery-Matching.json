@@ -1,0 +1,759 @@
+{
+  "name": "WorkFlow-4  Battery-Matching",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -16
+      ],
+      "id": "b0586a00-50e0-4baf-a87f-e0714ec3debc",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "81401536-f52c-4af8-bccb-098ed923495a",
+              "leftValue": "={{ Object.keys($json).length }}",
+              "rightValue": "=0",
+              "operator": {
+                "type": "number",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        672,
+        -16
+      ],
+      "id": "1af5d18c-de49-4c3e-918d-b501e2769f79",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        1200,
+        288
+      ],
+      "id": "14c0bce5-b636-4551-aa15-f5d80e5fffd5",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "ABNg4809pQO60C7R",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me",
+      "typeVersion": 1,
+      "position": [
+        2368,
+        32
+      ],
+      "id": "aff2fc79-5cda-44bd-88ec-8917bdf6162d",
+      "placeholder": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0ef7372b-ac8f-4da2-b9b5-a08bd677b2a5",
+              "name": "laptop_model",
+              "value": "HP EliteBook 840 G5",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        224,
+        -16
+      ],
+      "id": "fea6dd1f-ac63-4b0f-93a4-2acf3d7d2fbc",
+      "name": "Input Laptop Model"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT * FROM compatibility_cache \nWHERE query_model = '{{ $json.laptop_model }}' \nAND (expires_at IS NULL OR expires_at > NOW())\nORDER BY source ASC\nLIMIT 1;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        448,
+        -16
+      ],
+      "id": "70bd97eb-cdba-4777-afc0-3369800f5518",
+      "name": "Cache Hit?",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "41xuS6HMVz5ZwsAI",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "73b547e7-16c5-4aa5-8ce5-4c6fd80764c2",
+              "name": "laptop_model",
+              "value": "={{ $('Input Laptop Model').item.json.laptop_model }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        896,
+        64
+      ],
+      "id": "6e36bcc4-8157-4e0d-909e-36a4e2d26d14",
+      "name": "Laptop mode"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Laptop model: {{ $json.laptop_model }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are a laptop battery compatibility expert with knowledge of common OEM and third-party battery part numbers.\n\nList 2-4 battery part numbers/models that are realistic, commonly-known compatible replacements for the given laptop model.\n\nMake your best expert estimate even if you are not 100% certain.\n\nRespond ONLY with valid JSON in this exact format:\n\n{\n  \"candidates\": [\"MODEL1\", \"MODEL2\", \"MODEL3\"]\n}"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        1120,
+        64
+      ],
+      "id": "24382289-156f-415a-9515-d5fddc7f42e5",
+      "name": "Research Battery Candidates"
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = $input.first().json.text || $input.first().json.output;\nconst cleaned = raw.replace(/```json|```/g, '').trim();\nconst parsed = JSON.parse(cleaned);\n\nif (!parsed.candidates || parsed.candidates.length === 0) {\n  return [{ json: { model: null, source: 'researched', note: 'no_candidates_found' } }];\n}\n\nreturn parsed.candidates.map(model => ({\n  json: { model, source: 'researched' }\n}));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1472,
+        64
+      ],
+      "id": "07c4f27f-64cc-468c-87ac-d0144f8ee431",
+      "name": "Prepare Candidates",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "compatibility_cache",
+          "mode": "list",
+          "cachedResultName": "compatibility_cache"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "query_model": "={{ $json.model }}",
+            "candidate_ids": "={{ JSON.stringify($json) }}",
+            "source": "researched",
+            "expires_at": "={{ new Date(Date.now() + 30*24*60*60*1000).toISOString() }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "query_model",
+              "displayName": "query_model",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "candidate_ids",
+              "displayName": "candidate_ids",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "object",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "source",
+              "displayName": "source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "expires_at",
+              "displayName": "expires_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        1696,
+        64
+      ],
+      "id": "a0707d42-6809-4425-9c0d-348c3865470a",
+      "name": "Save in Cache memory",
+      "credentials": {
+        "postgres": {
+          "id": "41xuS6HMVz5ZwsAI",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "aa6ea6a0-57bd-49ad-be59-6c5af0728bb6",
+              "name": "verified_in_ims",
+              "value": false,
+              "type": "boolean"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1920,
+        64
+      ],
+      "id": "0822eb51-2c3c-4c58-9136-e6baa4c1e787",
+      "name": "Formatting the llm output"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        2144,
+        -16
+      ],
+      "id": "dd8fb409-2a92-4ace-b207-606bc78ae611",
+      "name": "Loop to send candidates"
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8000/v1/battery/search",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "={{$json.query_model}}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer demo-secret-key"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        2368,
+        -160
+      ],
+      "id": "bbcd1594-6a4f-496a-b6e0-8d58a8868424",
+      "name": "Middleware DB Check",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "49cd6026-f49b-4aff-adea-2609e96ed31e",
+              "leftValue": "={{ $json.matches && $json.matches.length > 0 }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        2592,
+        -160
+      ],
+      "id": "b7cf168f-6b51-4d14-ae53-abf288502ecb",
+      "name": "Match Found"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "35006f72-c9e6-4bfa-95fc-c9a9a1eccc7b",
+              "name": "verified_in_ims",
+              "value": true,
+              "type": "boolean"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        2816,
+        -160
+      ],
+      "id": "6f81d6fe-b0b7-4ef5-a553-d0b1126e2615",
+      "name": "Format answer"
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "event_log",
+          "mode": "list",
+          "cachedResultName": "event_log"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "workflow_name": "Workflow 4",
+            "status": "success",
+            "details": "={{ JSON.stringify($json) }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "correlation_id",
+              "displayName": "correlation_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "conversation_id",
+              "displayName": "conversation_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "workflow_name",
+              "displayName": "workflow_name",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "details",
+              "displayName": "details",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "object",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        3040,
+        -160
+      ],
+      "id": "11feb146-bc1a-49ae-9935-954a67adc596",
+      "name": "Save cmpatibility result",
+      "credentials": {
+        "postgres": {
+          "id": "41xuS6HMVz5ZwsAI",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "db0afd6c-0dbd-4f6a-a4a4-b52fad9a2581",
+              "name": "candidates",
+              "value": "={{ $json.candidate_ids }}",
+              "type": "string"
+            },
+            {
+              "id": "b0a054dc-2d93-44c0-a883-2a32ee2029d1",
+              "name": "source",
+              "value": "cache",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1920,
+        -192
+      ],
+      "id": "82a69d75-deaa-4f67-a67f-135b2435678b",
+      "name": "Format the output"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Input Laptop Model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Format the output",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Laptop mode",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Research Battery Candidates",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replace Me": {
+      "main": [
+        [
+          {
+            "node": "Loop to send candidates",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Input Laptop Model": {
+      "main": [
+        [
+          {
+            "node": "Cache Hit?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cache Hit?": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Laptop mode": {
+      "main": [
+        [
+          {
+            "node": "Research Battery Candidates",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Research Battery Candidates": {
+      "main": [
+        [
+          {
+            "node": "Prepare Candidates",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Candidates": {
+      "main": [
+        [
+          {
+            "node": "Save in Cache memory",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save in Cache memory": {
+      "main": [
+        [
+          {
+            "node": "Formatting the llm output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Formatting the llm output": {
+      "main": [
+        [
+          {
+            "node": "Loop to send candidates",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop to send candidates": {
+      "main": [
+        [
+          {
+            "node": "Middleware DB Check",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Replace Me",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Middleware DB Check": {
+      "main": [
+        [
+          {
+            "node": "Match Found",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Match Found": {
+      "main": [
+        [
+          {
+            "node": "Format answer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format answer": {
+      "main": [
+        [
+          {
+            "node": "Save cmpatibility result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format the output": {
+      "main": [
+        [
+          {
+            "node": "Loop to send candidates",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "1e050e5f-68ff-4586-a826-dddea02f6b31",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "926f7712c13f878bfbbed3a3b14e61e5e04a958f45ea9ded2157a41f131ea22b"
+  },
+  "nodeGroups": [],
+  "id": "YkK1KmYPB6lDmZ0U",
+  "tags": []
+}

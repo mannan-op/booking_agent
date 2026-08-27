@@ -1,0 +1,469 @@
+{
+  "name": "WorkFlow-5 IMS Search",
+  "nodes": [
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8000/v1/battery/search",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "={{ $json.model }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer demo-secret-key"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        464,
+        192
+      ],
+      "id": "8810c0ce-14bf-423b-b647-174efa80ce3c",
+      "name": "Battery Search",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "url": "=http://host.docker.internal:8000/v1/battery/{{ $json.matches[0].product_id }}/stock",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer demo-secret-key"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        912,
+        96
+      ],
+      "id": "5908809e-c80a-43bc-a767-2217be998e5d",
+      "name": "Stock Lookup",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e19ea257-0dbd-41b1-87a2-3872a46fa0d2",
+              "name": "product_id:",
+              "value": "={{ $json.product_id }}",
+              "type": "string"
+            },
+            {
+              "id": "e9d586d1-75eb-46e9-b42b-202bd3a07f93",
+              "name": "model",
+              "value": "={{ $('Battery Search').item.json.matches[0].model }}",
+              "type": "string"
+            },
+            {
+              "id": "f5ad7c42-f0b8-4e30-aa2a-8d5c7cc7d1c9",
+              "name": "stock_by_branch",
+              "value": "={{ $json.stock_by_branch }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1136,
+        96
+      ],
+      "id": "4fbfa13c-7e27-4b87-bec8-576b4d8a412b",
+      "name": "Combine Here "
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "083557db-ddd3-4cdf-a465-ca907d8a3d41",
+              "name": "model",
+              "value": "={{ $json.likely_model }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        240,
+        192
+      ],
+      "id": "2ec5a547-bdd1-4ffe-ad1b-39c20e10a0f3",
+      "name": "Battery model"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "a2f54158-9c80-4978-9415-a66bf4a4a1e1",
+              "leftValue": "={{ $json.matches.length > 0 }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        688,
+        192
+      ],
+      "id": "390f1896-281b-44c5-9f97-64d04b5d8301",
+      "name": " If available in stock"
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "event_log",
+          "mode": "list",
+          "cachedResultName": "event_log"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "workflow_name": "workflow-5 IMS-Search",
+            "status": "Success",
+            "details": "={{ JSON.stringify($json) }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "correlation_id",
+              "displayName": "correlation_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "conversation_id",
+              "displayName": "conversation_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "workflow_name",
+              "displayName": "workflow_name",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "details",
+              "displayName": "details",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "object",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        1360,
+        0
+      ],
+      "id": "c34f88fb-fd6c-48cc-97b3-23872af8b29b",
+      "name": "event_log",
+      "credentials": {
+        "postgres": {
+          "id": "41xuS6HMVz5ZwsAI",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "87667669-dc4f-4ca8-a8a5-da692f228795",
+              "name": "result:",
+              "value": "\"not_found\"",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        912,
+        288
+      ],
+      "id": "421cfeea-ed68-4963-b12f-d36c5989d2a5",
+      "name": "Start "
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "likely_model"
+            },
+            {
+              "name": "confidence",
+              "type": "number"
+            },
+            {
+              "name": "extracted_text"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        16,
+        192
+      ],
+      "id": "e25a1da7-09e7-44b5-85e3-13bb2a9238d0",
+      "name": "When Executed by Visison AI Wf "
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "rvcl1AOx0vQnaUJj",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/rvcl1AOx0vQnaUJj",
+          "cachedResultName": "WorkFlow-6 Pricing"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "product_id": "={{ $json[\"product_id:\"] }}",
+            "model": "={{ $json.model }}"
+          },
+          "matchingColumns": [
+            ""
+          ],
+          "schema": [
+            {
+              "id": "product_id",
+              "displayName": "product_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "model",
+              "displayName": "model",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        1280,
+        144
+      ],
+      "id": "8ae02c1d-b3dc-4781-bb2a-240f37b0b884",
+      "name": "Call 'WorkFlow-6 Pricing'"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Battery Search": {
+      "main": [
+        [
+          {
+            "node": " If available in stock",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Stock Lookup": {
+      "main": [
+        [
+          {
+            "node": "Combine Here ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Battery model": {
+      "main": [
+        [
+          {
+            "node": "Battery Search",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    " If available in stock": {
+      "main": [
+        [
+          {
+            "node": "Stock Lookup",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Start ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Combine Here ": {
+      "main": [
+        [
+          {
+            "node": "event_log",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Call 'WorkFlow-6 Pricing'",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Visison AI Wf ": {
+      "main": [
+        [
+          {
+            "node": "Battery model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "e18ef0b0-0ba8-405b-a101-e58d2233f4de",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "926f7712c13f878bfbbed3a3b14e61e5e04a958f45ea9ded2157a41f131ea22b"
+  },
+  "nodeGroups": [],
+  "id": "damAaJeRrATu9EzB",
+  "tags": []
+}

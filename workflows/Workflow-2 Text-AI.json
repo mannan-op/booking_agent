@@ -1,0 +1,330 @@
+{
+  "name": "Workflow-2 Text-AI",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        224,
+        304
+      ],
+      "id": "0131d449-7dc8-4807-87d3-b0885dc1badd",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        752,
+        416
+      ],
+      "id": "7602a122-ef82-443c-b82a-3da7d82cf2ce",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "ABNg4809pQO60C7R",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1744,
+        336
+      ],
+      "id": "ab02dcf4-d350-439a-859a-a3a4139813f7",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "caedaf35-8bd9-4151-ba31-a1aa7f291975",
+              "name": "conversation_id",
+              "value": "demo-conv-001",
+              "type": "string"
+            },
+            {
+              "id": "3429949b-5e62-4403-a7b7-2f440c8f3ad8",
+              "name": "channel",
+              "value": "web_demo",
+              "type": "string"
+            },
+            {
+              "id": "a8c3d460-d6b3-4620-83f8-f03cdff16c23",
+              "name": "text",
+              "value": "HP EliteBook 840 G5 laptop ki original battery available hai? Price kya hai aur warranty kitni hai?",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        448,
+        304
+      ],
+      "id": "e035b533-f4ad-475b-97b7-bb50ddeef07d",
+      "name": "User Query"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.text }}\n\n",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are a battery/laptop identification assistant for a battery sales business in Pakistan. Customer messages may be in English, Urdu, or Roman Urdu (or a mix of all three).  Your job: read the customer's message and extract what battery or laptop model they are asking about. Respond with ONLY a single JSON object — no explanation, no markdown fences, no extra commentary before or after it.  JSON schema (always return every key, use null where not applicable): {   \"query_type\": \"battery_model\" | \"laptop_model\" | \"unclear\",   \"raw_text\": \"<the original customer text, unchanged>\",   \"extracted_model\": \"<battery model/part number if directly mentioned, else null>\",   \"laptop_brand\": \"<e.g. HP, Dell, Lenovo — null if not applicable>\",   \"laptop_series\": \"<e.g. EliteBook 840 G5 — null if not applicable>\",   \"confidence\": <float between 0.0 and 1.0>,   \"notes\": \"<short note explaining your reasoning, one sentence max>\" }  Rules: 1. If the customer gives an exact battery part number or model code (e.g. HT03XL,    854108-855), set query_type to \"battery_model\" and put the exact string they used in    extracted_model. Set confidence high (0.85+). 2. If the customer only gives a laptop brand/model with no battery part number (e.g. \"HP    EliteBook 840 G5 battery available hai?\"), set query_type to \"laptop_model\", fill in    laptop_brand and laptop_series, and leave extracted_model as null. 3. If the message is too vague to determine either (e.g. \"battery chahiye\", \"need a    battery\"), set query_type to \"unclear\" and confidence below 0.5. Do not guess a brand    or model that wasn't stated or clearly implied. 4. Never invent, complete, or \"correct\" a part number the customer didn't actually write.    If they wrote it slightly wrong, pass it through as-is in extracted_model — matching    against the real inventory happens in a later step, not here. 5. Ignore small talk, greetings, or pricing questions unrelated to model identification —    focus only on identifying the product. 6. Output raw JSON only. Do not wrap it in ```json code fences. Do not add any text before    or after the JSON object. USER MESSAGE:\n{{$json.text}}"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        672,
+        192
+      ],
+      "id": "d608e945-7700-45ed-9fe0-100d1fe4bd34",
+      "name": "LLM Extarcting the Required data from raw text"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract the response text directly from the native Gemini node output structure\nconst raw = $input.first().json.text;\n\nif (!raw) {\n  return [{ json: { valid: false, error: \"no_text_returned\", raw: \"\" } }];\n}\n\n// Strip out any markdown fences if Gemini accidentally included them\nconst cleaned = raw.replace(/```json|```/g, \"\").trim();\n\nlet parsed;\ntry {\n  parsed = JSON.parse(cleaned);\n} catch (e) {\n  // If parsing fails, return the error structure cleanly for debugging\n  return [{ json: { valid: false, error: \"parse_failed\", raw: cleaned } }];\n}\n\n// Return the structured object cleanly for downstream nodes\nreturn [{ json: { valid: true, ...parsed } }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1024,
+        192
+      ],
+      "id": "7be73a93-213a-41a0-b1cd-2d21d7ce1e66",
+      "name": "Prase code in JS"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "95843a12-83cb-49e7-baf5-8720a043ed20",
+              "leftValue": "={{ $json.valid === true \n   && $json.query_type !== undefined \n   && typeof $json.confidence === \"number\" }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1248,
+        192
+      ],
+      "id": "83f04aee-b698-4534-af97-b78caab4b39c",
+      "name": "Checking of reuired fileds for battery"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "efa6147d-7309-4905-8849-715f5299ffcf",
+              "name": "text",
+              "value": "Incorrect Information, retry please.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1504,
+        336
+      ],
+      "id": "a4143c2b-9776-4985-91fd-a2066f8dd043",
+      "name": "Error message1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2227213d-2324-4564-a953-5663db93af3a",
+              "name": "model",
+              "value": "={{ $json.extracted_model }}",
+              "type": "string"
+            },
+            {
+              "id": "95532bb5-7ae7-4558-b766-152f799c4478",
+              "name": "laptop_brand",
+              "value": "={{ $json.laptop_brand }}",
+              "type": "string"
+            },
+            {
+              "id": "1df6ca43-efce-4086-aaa2-22aeb35db93d",
+              "name": "laptop_series",
+              "value": "={{ $json.laptop_series }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1968,
+        144
+      ],
+      "id": "62a7a394-a243-49f1-b840-16407c6371d3",
+      "name": "Looping back to text message"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "User Query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "LLM Extarcting the Required data from raw text",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Looping back to text message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "User Query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "User Query": {
+      "main": [
+        [
+          {
+            "node": "LLM Extarcting the Required data from raw text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM Extarcting the Required data from raw text": {
+      "main": [
+        [
+          {
+            "node": "Prase code in JS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prase code in JS": {
+      "main": [
+        [
+          {
+            "node": "Checking of reuired fileds for battery",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Checking of reuired fileds for battery": {
+      "main": [
+        [
+          {
+            "node": "Looping back to text message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error message1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "56873d8b-7b3c-47ff-838f-472a3a715261",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "926f7712c13f878bfbbed3a3b14e61e5e04a958f45ea9ded2157a41f131ea22b"
+  },
+  "nodeGroups": [],
+  "id": "o3ULi4E5Tyc6mShn",
+  "tags": []
+}

@@ -1,0 +1,564 @@
+{
+  "name": "WorkFlow-7A Customer Communication",
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "db0fa9f4-4c93-46fa-a274-dd261879f042",
+              "name": "product_id",
+              "value": "={{ $json.product_id }}",
+              "type": "string"
+            },
+            {
+              "id": "d75cd511-4110-4798-af61-e89fcedef849",
+              "name": "model",
+              "value": "={{ $json.model }}",
+              "type": "string"
+            },
+            {
+              "id": "0faac791-ba0e-4f73-a6e8-6fc58360bacb",
+              "name": "price",
+              "value": "={{ $json.final_price }}",
+              "type": "string"
+            },
+            {
+              "id": "a09f796e-657d-4eee-8620-14d1be94b3a1",
+              "name": "pricing_window_used",
+              "value": "30_day",
+              "type": "string"
+            },
+            {
+              "id": "43432138-e1b1-4a44-b609-bb9f9bef6928",
+              "name": "branch",
+              "value": "Hafeez Center",
+              "type": "string"
+            },
+            {
+              "id": "f2c0aa78-11d3-42d6-aeef-adba7dc72e8c",
+              "name": "stock_qty",
+              "value": "8",
+              "type": "string"
+            },
+            {
+              "id": "09e7af93-569a-4156-9bfa-e3088fbd3b09",
+              "name": "is_original",
+              "value": true,
+              "type": "boolean"
+            },
+            {
+              "id": "263614bb-a26e-419b-9bbf-3344c91919df",
+              "name": "has_warranty",
+              "value": true,
+              "type": "boolean"
+            },
+            {
+              "id": "821db9ad-4e97-41a5-9bbc-24eb26fef1fe",
+              "name": "status",
+              "value": "found",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        288,
+        80
+      ],
+      "id": "b78ce966-9e5e-4706-8eb6-83c2635cbc3d",
+      "name": "Simulate Input"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.status }}",
+                    "rightValue": "found",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "98e09aaf-7afc-4180-afa0-5c30059fafcb"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "71690d62-bc0c-48fd-9807-2476eb2fec1d",
+                    "leftValue": "={{ $json.status }}",
+                    "rightValue": "not_found",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "e49c141d-2730-4b09-842c-aecd46d7fa90",
+                    "leftValue": "={{ $json.status }}",
+                    "rightValue": "verifying",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        512,
+        64
+      ],
+      "id": "83339b85-5f68-4b68-8561-553b2e73cb8a",
+      "name": "Decide Template"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1a72b16f-e92e-401f-9f00-1aef533efa8d",
+              "name": "message",
+              "value": "=Battery available ✅ Battery: {{ $json.model }} Price: PKR {{ $json.price }} Branch: {{ $json.branch }} Stock: {{ $json.stock_qty }} units {{ $json.is_original ? \"Original ✅\\n\" : \"\" }}{{ $json.has_warranty ? \"Warranty included ✅\\n\" : \"\" }}",
+              "type": "string"
+            },
+            {
+              "id": "24ff97c1-d83f-48bf-8834-ef6147d78ac8",
+              "name": "reply_type",
+              "value": "quotation",
+              "type": "string"
+            },
+            {
+              "id": "1cdea3d3-37cd-4fd3-bce2-105a17ea4196",
+              "name": "status",
+              "value": "awaiting_confirmation",
+              "type": "string"
+            },
+            {
+              "id": "48cc128b-7c55-4a78-834a-0d9fec59e27e",
+              "name": "conversation_id",
+              "value": "={{ $json.conversation_id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        736,
+        -112
+      ],
+      "id": "1dc2c98e-d7f6-4a75-8f79-0dde65377e3a",
+      "name": "Build Message"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4f2d7866-3375-42ef-aa4a-78525cc6a2b2",
+              "name": "message",
+              "value": "=\"Sorry, we couldn't find an exact match for {{ $json.model }} right now. We're checking further and will update you shortly.\"",
+              "type": "string"
+            },
+            {
+              "id": "3decdb7c-ac94-433b-bbc2-af2e21738daf",
+              "name": "reply_type",
+              "value": "not_found",
+              "type": "string"
+            },
+            {
+              "id": "44727f73-4e49-4bc4-9fab-36a1e60cc74c",
+              "name": "conversation_id",
+              "value": "={{ $json.conversation_id }}",
+              "type": "string"
+            },
+            {
+              "id": "1b3d3dd6-6ed1-4dca-86fc-e59319145de7",
+              "name": "status",
+              "value": "checking",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        736,
+        80
+      ],
+      "id": "9cd34946-24de-4dd1-8856-27660d28cb93",
+      "name": "Not Found"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2ef1ffbf-3d1e-4c6a-87ed-e9e98a2201d8",
+              "name": "message",
+              "value": "=\"Checking stock and pricing for {{ $json.model }}, one moment please...\"",
+              "type": "string"
+            },
+            {
+              "id": "130e9727-6e5b-44c5-8574-d04f45f03b05",
+              "name": "reply_type",
+              "value": "verifying",
+              "type": "string"
+            },
+            {
+              "id": "0d39ad05-0c82-432e-852a-08695abaa3e3",
+              "name": "status",
+              "value": "checking",
+              "type": "string"
+            },
+            {
+              "id": "ee2d5feb-4547-40ee-bf69-31a109357992",
+              "name": "conversation_id",
+              "value": "={{ $json.conversation_id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        736,
+        272
+      ],
+      "id": "99c2e528-db2c-478d-a8e1-7f9fd91d4b7b",
+      "name": "Verifying Branch"
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "event_log",
+          "mode": "list",
+          "cachedResultName": "event_log"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "conversation_id": "={{ $json.conversation_id }}",
+            "workflow_name": "Workflow 7",
+            "status": "success",
+            "details": "={{ JSON.stringify($json) }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "correlation_id",
+              "displayName": "correlation_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "conversation_id",
+              "displayName": "conversation_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "workflow_name",
+              "displayName": "workflow_name",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "details",
+              "displayName": "details",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "object",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        960,
+        80
+      ],
+      "id": "9fb4a29e-cb23-4739-8c8a-19a940de4eb9",
+      "name": "Log to event_log",
+      "credentials": {
+        "postgres": {
+          "id": "41xuS6HMVz5ZwsAI",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c8cfd728-0716-4bdd-91ef-96a9fea23004",
+              "name": "reply_type",
+              "value": "={{ $json.details.reply_type }}",
+              "type": "string"
+            },
+            {
+              "id": "7b9a2cb7-6f29-426c-a6cf-a643098f82ce",
+              "name": "message",
+              "value": "={{ $json.details.message }}",
+              "type": "string"
+            },
+            {
+              "id": "931499b7-f7d9-46fe-8463-61519d55fc9c",
+              "name": "status",
+              "value": "={{ $json.status }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1184,
+        80
+      ],
+      "id": "de305969-1558-4b5e-96a3-38b7548f85ce",
+      "name": "Final Output"
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "product_id"
+            },
+            {
+              "name": "model"
+            },
+            {
+              "name": "final_price",
+              "type": "number"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        80,
+        64
+      ],
+      "id": "990bc4cf-12f2-4367-b1b6-fd469f37732b",
+      "name": "WorkFlow-6 Pricing"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Simulate Input": {
+      "main": [
+        [
+          {
+            "node": "Decide Template",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Decide Template": {
+      "main": [
+        [
+          {
+            "node": "Build Message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Not Found",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Verifying Branch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Message": {
+      "main": [
+        [
+          {
+            "node": "Log to event_log",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Not Found": {
+      "main": [
+        [
+          {
+            "node": "Log to event_log",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verifying Branch": {
+      "main": [
+        [
+          {
+            "node": "Log to event_log",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log to event_log": {
+      "main": [
+        [
+          {
+            "node": "Final Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "WorkFlow-6 Pricing": {
+      "main": [
+        [
+          {
+            "node": "Simulate Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "4fabf185-0082-4eae-9de2-4659b4305c6f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "926f7712c13f878bfbbed3a3b14e61e5e04a958f45ea9ded2157a41f131ea22b"
+  },
+  "nodeGroups": [],
+  "id": "6k6GS8emcQqwTrXl",
+  "tags": []
+}

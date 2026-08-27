@@ -19,6 +19,7 @@ export type NavItem = {
 export const navItems: NavItem[] = [
   { title: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { title: "Customer Queries", href: "/queries", icon: MessageSquareText, badge: 18 },
+  { title: "Live Chat", href: "/chat", icon: MessageSquareText },
   { title: "Human Review", href: "/review", icon: ClipboardCheck, badge: 3 },
   { title: "Orders", href: "/orders", icon: ShoppingCart },
   { title: "Inventory", href: "/inventory", icon: Package },

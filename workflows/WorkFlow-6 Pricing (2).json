@@ -1,0 +1,944 @@
+{
+  "name": "WorkFlow-6 Pricing",
+  "nodes": [
+    {
+      "parameters": {
+        "url": "=http://host.docker.internal:8000/v1/sales/{{ $('set Product_id').item.json.product_id }}",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "days",
+              "value": "30"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer demo-secret-key"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        1344,
+        176
+      ],
+      "id": "62507f70-bcea-43c1-b242-3010a4c7905e",
+      "name": "HTTP Request",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT * FROM pricing_config;\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        896,
+        176
+      ],
+      "id": "49e4dcc8-a822-4929-8639-8cb61421b3d0",
+      "name": "Select_From_Price_Config",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "41xuS6HMVz5ZwsAI",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8e0184dd-56ed-4990-9ba6-58104042334c",
+              "name": "product_id",
+              "value": "=P0001",
+              "type": "string"
+            },
+            {
+              "id": "e2592f77-8929-47cd-8a68-ff893702d990",
+              "name": "model",
+              "value": "HT03XL",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        672,
+        176
+      ],
+      "id": "80af5748-cf2d-4218-8553-5aaafa75fd24",
+      "name": "set Product_id"
+    },
+    {
+      "parameters": {
+        "jsCode": "const basePrice = 15000;\nconst markup = Number($json.markup_percent);\n\nreturn [{\n  json: {\n    product_id: \"P0001\",\n    base_price: basePrice,\n    markup_percent: markup,\n    final_price: basePrice * (1 + markup / 100)\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        176
+      ],
+      "id": "1f3f7837-5294-4995-b56e-090be2216e16",
+      "name": "Fetch Primary Market Prices"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "3c729b55-a85e-4271-804c-417c87e3fe5d",
+              "leftValue": "={{ $json.sample_size }}",
+              "rightValue": "={{ $('Select_From_Price_Config').item.json.min_sample_size }}",
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1568,
+        176
+      ],
+      "id": "30a52be3-82e3-4394-889f-cd8219759a6d",
+      "name": "Check Primary Price Samples"
+    },
+    {
+      "parameters": {
+        "jsCode": "const salesData = $input.first().json;\nconst config = $('Select_From_Price_Config').first().json;\nconst prices = (salesData.sales || [])\n  .map((sale) => Number(sale.sale_price))\n  .filter((value) => Number.isFinite(value));\n\nlet price;\nif (config.formula_type === 'average') {\n  price = prices.reduce((sum, value) => sum + value, 0) / prices.length;\n} else if (config.formula_type === 'median') {\n  const sorted = [...prices].sort((left, right) => left - right);\n  const middle = Math.floor(sorted.length / 2);\n  price = sorted.length % 2 === 0\n    ? (sorted[middle - 1] + sorted[middle]) / 2\n    : sorted[middle];\n}\n\nif (config.markup_percent) {\n  price = price * (1 + Number(config.markup_percent) / 100);\n}\n\nreturn [{\n  json: {\n    price: Math.round(price),\n    pricing_window_used: '30_day',\n    sample_size: prices.length\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2688,
+        -112
+      ],
+      "id": "3c215eb0-a9b5-4bf1-b724-4441a4d0a5c0",
+      "name": "Calculate Primary Price"
+    },
+    {
+      "parameters": {
+        "url": "=http://host.docker.internal:8000/v1/sales/{{ $('set Product_id').item.json.product_id }}",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "days",
+              "value": "60"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer demo-secret-key"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        1792,
+        272
+      ],
+      "id": "47d27209-c82f-46bf-8c0c-d0e04dbf1e91",
+      "name": "Fetch Secondary Market Prices"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "c31ed357-b6cd-409a-aeec-4e01bd561d3d",
+              "leftValue": "={{ $json.sample_size }}",
+              "rightValue": "={{ $('Select_From_Price_Config').item.json.min_sample_size }}",
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        2016,
+        272
+      ],
+      "id": "ae5c870f-970f-4fcf-b527-59678741d0bd",
+      "name": "Check Secondary Price Samples"
+    },
+    {
+      "parameters": {
+        "jsCode": "const salesData = $input.first().json;\nconst config = $('Select_From_Price_Config').first().json;\n\nconst prices = salesData.sales\n  .map(s => Number(s.sale_price))\n  .filter(p => !isNaN(p));\n\nlet price;\n\nif (config.formula_type === 'average') {\n  price = prices.reduce((sum, p) => sum + p, 0) / prices.length;\n} else if (config.formula_type === 'median') {\n  const sorted = [...prices].sort((a, b) => a - b);\n  const mid = Math.floor(sorted.length / 2);\n\n  price = sorted.length % 2 === 0\n    ? (sorted[mid - 1] + sorted[mid]) / 2\n    : sorted[mid];\n}\n\nif (config.markup_percent) {\n  price = price * (1 + Number(config.markup_percent) / 100);\n}\n\nreturn [{\n  json: {\n    product_id: salesData.product_id,\n    price: Math.round(price),\n    pricing_window_used: `${salesData.window_days}_day`,\n    sample_size: prices.length,\n    formula_used: config.formula_type,\n    markup_percent: Number(config.markup_percent)\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2688,
+        80
+      ],
+      "id": "415aaf6c-2a20-4097-8765-acbd34f34dd5",
+      "name": "Calculate Secondary Price"
+    },
+    {
+      "parameters": {
+        "url": "=http://host.docker.internal:8000/v1/sales/{{ $('set Product_id').item.json.product_id }}",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "days",
+              "value": "90"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer demo-secret-key"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        2240,
+        368
+      ],
+      "id": "11aa9019-0ad7-4cef-8f1a-c75aa16b02a0",
+      "name": "Fetch Tertiary Market Price"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "fcc85381-bf60-4583-a096-f0566865f77d",
+              "leftValue": "={{ $json.sample_size }}",
+              "rightValue": "={{ $('Select_From_Price_Config').item.json.min_sample_size }}",
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        2464,
+        368
+      ],
+      "id": "79daa097-36b9-43f3-b9dc-65e0b9aa92b1",
+      "name": "Check Tertiary Price Samples"
+    },
+    {
+      "parameters": {
+        "jsCode": "const salesData = $input.first().json;\nconst config = $('Select_From_Price_Config').first().json; // <-- yahan EXACT node name daalna\n\n// Weighted average: total revenue / total quantity\nlet totalRevenue = 0;\nlet totalQty = 0;\nsalesData.sales.forEach(sale => {\n  totalRevenue += sale.sale_price * sale.qty;\n  totalQty += sale.qty;\n});\n\nlet price = totalRevenue / totalQty;\n\nif (config.markup_percent) {\n  price = price * (1 + config.markup_percent / 100);\n}\n\nreturn [{\n  json: {\n    price: Math.round(price),\n    pricing_window_used: '90_day',\n    sample_size: salesData.sample_size\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2688,
+        272
+      ],
+      "id": "88762647-e12f-41a9-a24b-09a8e2163d51",
+      "name": "Calculate Tertiary Price"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "15c557bd-97e3-433f-880f-c1dc0c500afa",
+              "name": "status",
+              "value": "pricing_unresolved",
+              "type": "string"
+            },
+            {
+              "id": "593fd22c-d21a-4fad-abb0-26aa16c59d5f",
+              "name": "product_id",
+              "value": "={{ $('set Product_id').item.json.product_id }}",
+              "type": "string"
+            },
+            {
+              "id": "a153991f-dd8c-47cb-a269-ec22be2999c6",
+              "name": "reason",
+              "value": "\"No sales data in 30, 60, or 90 day windows\"",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        2688,
+        464
+      ],
+      "id": "c044b262-e296-438f-9338-c45d2de24271",
+      "name": "Preparing Human Review Task"
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "human_review_tasks",
+          "mode": "list",
+          "cachedResultName": "human_review_tasks"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "conversation_id": "1",
+            "reason_code": "pricing_unresolved",
+            "payload": "={{ JSON.stringify($json) }}",
+            "status": "pending"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "conversation_id",
+              "displayName": "conversation_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "reason_code",
+              "displayName": "reason_code",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "payload",
+              "displayName": "payload",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "object",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        2912,
+        464
+      ],
+      "id": "9546a858-f8e0-496b-94b6-c64d4cf9da5b",
+      "name": "Human Review Tasks",
+      "credentials": {
+        "postgres": {
+          "id": "41xuS6HMVz5ZwsAI",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        2912,
+        64
+      ],
+      "id": "418a7f23-17a0-4ed1-9e11-f47017666a06",
+      "name": "Merging Price Result"
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.first().json;\nconst config = $('Select_From_Price_Config').first().json;\n\nconst sampleCount = Number(data.sample_size || 0);\nconst minSampleSize = Number(config.min_sample_size || 3);\n\nreturn [{\n  json: {\n    pricing_status: sampleCount >= minSampleSize ? \"resolved\" : \"unresolved\",\n    sample_count: sampleCount,\n    min_sample_size: minSampleSize,\n    prices: data.price ? [data.price] : [],\n    message: sampleCount >= minSampleSize\n      ? \"Enough valid price samples\"\n      : \"Not enough valid price samples\"\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3136,
+        80
+      ],
+      "id": "64125ba6-b40c-4101-97ea-af7f3fbc209e",
+      "name": "Finalizing Price Result"
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "final_pricing",
+          "mode": "list",
+          "cachedResultName": "final_pricing"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "product_id": "={{ $json.product_id }}",
+            "query_model": "={{ $json.query_model }}",
+            "sample_count": "={{ $json.sample_count }}",
+            "average_price": "={{ $json.average_price }}",
+            "markup_percent": "={{ $json.markup_percent }}",
+            "final_price": "={{ $json.final_price }}",
+            "created_at": "={{ $now }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "product_id",
+              "displayName": "product_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "query_model",
+              "displayName": "query_model",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "sample_count",
+              "displayName": "sample_count",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "average_price",
+              "displayName": "average_price",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "markup_percent",
+              "displayName": "markup_percent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "final_price",
+              "displayName": "final_price",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        3584,
+        80
+      ],
+      "id": "8dc6f015-10c6-4834-9bad-f6c22e70de92",
+      "name": "Save Final Price",
+      "credentials": {
+        "postgres": {
+          "id": "41xuS6HMVz5ZwsAI",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "6k6GS8emcQqwTrXl",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/6k6GS8emcQqwTrXl",
+          "cachedResultName": "WorkFlow-7A Customer Communication"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "product_id": "={{ $json.product_id }}",
+            "final_price": "={{ $json.final_price }}",
+            "model": "={{ $json.query_model }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "product_id",
+              "displayName": "product_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "model",
+              "displayName": "model",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "final_price",
+              "displayName": "final_price",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        3808,
+        80
+      ],
+      "id": "9d9c0ae4-f4ac-4708-ae6e-17566740d2da",
+      "name": "Call 'WorkFlow-7A Customer Communication'"
+    },
+    {
+      "parameters": {
+        "jsCode": "const prices = $json.prices || [];\n\nconst average_price =\n  prices.reduce((sum, p) => sum + Number(p), 0) / prices.length;\n\nconst markup_percent = 20;\nconst final_price = Math.round(\n  average_price * (1 + markup_percent / 100)\n);\n\nreturn [{\n  json: {\n    ...$json,\n    product_id: $json.product_id || \"BAT-001\",\n    query_model: $json.query_model || \"HT03XL\",\n    average_price,\n    markup_percent,\n    final_price\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3360,
+        80
+      ],
+      "id": "0efc6713-df21-4c79-be1f-26b07c13f801",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        448,
+        176
+      ],
+      "id": "9adbd59a-8810-4e02-b558-39fd957f82f9",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "product_id"
+            },
+            {
+              "name": "model"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        224,
+        176
+      ],
+      "id": "dd8dff45-908d-44e4-9555-02914b02b49f",
+      "name": "When Executed by Another Workflow"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Check Primary Price Samples",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select_From_Price_Config": {
+      "main": [
+        [
+          {
+            "node": "Fetch Primary Market Prices",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set Product_id": {
+      "main": [
+        [
+          {
+            "node": "Select_From_Price_Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Primary Market Prices": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Primary Price Samples": {
+      "main": [
+        [
+          {
+            "node": "Calculate Primary Price",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Fetch Secondary Market Prices",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculate Primary Price": {
+      "main": [
+        [
+          {
+            "node": "Merging Price Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Secondary Market Prices": {
+      "main": [
+        [
+          {
+            "node": "Check Secondary Price Samples",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Secondary Price Samples": {
+      "main": [
+        [
+          {
+            "node": "Calculate Secondary Price",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Fetch Tertiary Market Price",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculate Secondary Price": {
+      "main": [
+        [
+          {
+            "node": "Merging Price Result",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Fetch Tertiary Market Price": {
+      "main": [
+        [
+          {
+            "node": "Check Tertiary Price Samples",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Tertiary Price Samples": {
+      "main": [
+        [
+          {
+            "node": "Calculate Tertiary Price",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Preparing Human Review Task",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculate Tertiary Price": {
+      "main": [
+        [
+          {
+            "node": "Merging Price Result",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Preparing Human Review Task": {
+      "main": [
+        [
+          {
+            "node": "Human Review Tasks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merging Price Result": {
+      "main": [
+        [
+          {
+            "node": "Finalizing Price Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Finalizing Price Result": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Final Price": {
+      "main": [
+        [
+          {
+            "node": "Call 'WorkFlow-7A Customer Communication'",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Save Final Price",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        []
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "set Product_id",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "38452f45-7b88-4e30-827f-2d46450f3b2f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "926f7712c13f878bfbbed3a3b14e61e5e04a958f45ea9ded2157a41f131ea22b"
+  },
+  "nodeGroups": [],
+  "id": "rvcl1AOx0vQnaUJj",
+  "tags": []
+}

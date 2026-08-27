@@ -1,0 +1,999 @@
+{
+  "name": "WorkFlow-7B Intent Classification",
+  "nodes": [
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-pro-preview-tts",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        80,
+        704
+      ],
+      "id": "697ebf13-3012-4b30-b16d-53f716ade42c",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "ABNg4809pQO60C7R",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c8392d44-a165-4eef-ab9e-4b63c50d82c4",
+              "name": "raw_text",
+              "value": "={{ $json.raw_text }}",
+              "type": "string"
+            },
+            {
+              "id": "cbe182a4-4496-4e8b-b3f5-4049d9c835e0",
+              "name": "image_url",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "4fcc17d5-1ca5-4d75-87e8-35adfc18fcbd",
+              "name": "message_id",
+              "value": "={{ $json.message_id }}",
+              "type": "string"
+            },
+            {
+              "id": "82c80c43-0113-4da1-8ec4-e1285041d0ea",
+              "name": "conversation_id",
+              "value": "={{ $json.conversation_id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        288,
+        272
+      ],
+      "id": "ba6d45d8-e186-4a7d-8424-735b594b0c94",
+      "name": "Input Customer Message"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an intent classifier and data extractor for a battery sales chat.\n\nClassify the customer's reply into EXACTLY ONE of these 11 intents:\n\nORDER_CONFIRMATION, ORDER_CANCELLATION, NEGOTIATE_PRICE, ASK_WARRANTY, ASK_AVAILABILITY, ASK_DELIVERY, ASK_SPECS, GREETING, HUMAN_AGENT_REQUEST, THANKS, UNKNOWN\n\nAlso extract:\n- model: battery model/part number mentioned by the customer. Return null if not mentioned.\n- quantity: number of batteries requested/ordered. Return null if not mentioned.\n\nCustomer reply: {{ $json.raw_text }}\n\nRespond ONLY with valid JSON, no other text, no markdown fences:\n\n{\n  \"intent\": \"ONE_OF_THE_11_INTENTS_ABOVE\",\n  \"model\": \"MODEL_OR_PART_NUMBER_OR_NULL\",\n  \"quantity\": 1\n}",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        512,
+        272
+      ],
+      "id": "3e7b2e94-3d80-4421-b007-e0d1eabdf31c",
+      "name": "Classify Intent"
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = $input.first().json.text || $input.first().json.output;\n\nconst cleaned = String(raw)\n  .replace(/```json/g, '')\n  .replace(/```/g, '')\n  .trim();\n\nconst parsed = JSON.parse(cleaned);\n\nconst input = $('Input Customer Message').first().json;\n\nreturn [{\n  json: {\n    intent: String(parsed.intent).trim(),\n    model: parsed.model ?? null,\n    quantity: parsed.quantity ?? null,\n    conversation_id: input.conversation_id,\n    message_id: input.message_id,\n    raw_text: input.raw_text,\n    image_url: input.image_url ?? null\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        864,
+        272
+      ],
+      "id": "39291cb2-94b4-4ccd-b31c-b268f75df1fc",
+      "name": "Parse Intent JSON"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Parse Intent JSON').item.json.intent }}",
+                    "rightValue": "ORDER_CONFIRMATION",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "0b460c9b-62d7-4e76-a6f5-4ba6fdfcbb16"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "b7e2a494-985f-4777-8128-2ab3e10ca730",
+                    "leftValue": "={{ $('Parse Intent JSON').item.json.intent }}",
+                    "rightValue": "PRICING",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "cd0ea1c3-27e8-4c37-af99-f468e59f6c27",
+                    "leftValue": "={{ $('Parse Intent JSON').item.json.intent }}",
+                    "rightValue": "ASK_WARRANTY",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "7ec036f9-5740-4d8d-8ea3-a6085cfb8db3",
+                    "leftValue": "={{ $('Parse Intent JSON').item.json.intent }}",
+                    "rightValue": "ORDER_STATUS",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "e49e723d-e2f7-4f89-bcb6-627c9a380d3a",
+                    "leftValue": "={{ $('Parse Intent JSON').item.json.intent }}",
+                    "rightValue": "HUMAN_REVIEW",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        1312,
+        208
+      ],
+      "id": "b599dded-6a46-45ec-92f0-57af7403f876",
+      "name": "Route By Intent"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "dd66f215-a06f-46bb-96b9-34d69e3c89cd",
+              "name": "next_action",
+              "value": "trigger Workflow 8 - Order Creation",
+              "type": "string"
+            },
+            {
+              "id": "b099ae83-5d02-4ba2-8fc1-77fa6fac2c06",
+              "name": "conversation_id",
+              "value": "={{ $('Parse Intent JSON').item.json.conversation_id }}",
+              "type": "string"
+            },
+            {
+              "id": "1a8d3cde-5f01-4ffc-96dd-3b7068e4efd4",
+              "name": "model",
+              "value": "={{ $('HTTP Request').item.json.matches[0].model }}",
+              "type": "string"
+            },
+            {
+              "id": "63a36475-ac6a-4e38-8a3a-af73d3ab0e95",
+              "name": "quantity",
+              "value": "={{ $('Parse Intent JSON').item.json.quantity }}",
+              "type": "string"
+            },
+            {
+              "id": "9bd46a82-a2a2-4743-b537-fc81669ca111",
+              "name": "intent",
+              "value": "={{ $('Parse Intent JSON').item.json.intent }}",
+              "type": "string"
+            },
+            {
+              "id": "429d3175-9b99-4896-b122-4d75c170d9a9",
+              "name": "product_id",
+              "value": "={{ $('HTTP Request').item.json.matches[0].product_id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1536,
+        80
+      ],
+      "id": "ca9ab5ff-4f44-47a8-a1b5-345362ee5b7b",
+      "name": "Order Confirmation Action"
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "human_review_tasks",
+          "mode": "list",
+          "cachedResultName": "human_review_tasks"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "conversation_id": "={{ $json.conversation_id }}",
+            "reason_code": "={{ $json.intent }}",
+            "payload": "={{ JSON.stringify($json) }}",
+            "status": "pending"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "conversation_id",
+              "displayName": "conversation_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "reason_code",
+              "displayName": "reason_code",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "payload",
+              "displayName": "payload",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "object",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        1536,
+        272
+      ],
+      "id": "461cb4a2-a894-4f37-8ac3-cd79bc698a4b",
+      "name": "Create Human Review Task",
+      "credentials": {
+        "postgres": {
+          "id": "41xuS6HMVz5ZwsAI",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "23c60d74-8c7f-484e-9b0e-34941bfcbdac",
+              "name": "message",
+              "value": "Here's the info you asked about again: ...",
+              "type": "string"
+            },
+            {
+              "id": "1e019969-59e3-4acf-85a3-2a51d7391939",
+              "name": "reply_type",
+              "value": "clarifying_question",
+              "type": "string"
+            },
+            {
+              "id": "fb782ee8-75cb-42ca-bd86-b25cd3d823d5",
+              "name": "conversation_id",
+              "value": "={{ $json.conversation_id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1536,
+        464
+      ],
+      "id": "276020ca-18f1-4533-aea7-8639b525013a",
+      "name": "Build Clarification Response"
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "messages",
+          "mode": "list",
+          "cachedResultName": "messages"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "confidence": 0,
+            "message_id": "={{ 'MSG-' + Date.now() }}",
+            "conversation_id": "={{ $json.conversation_id }}",
+            "direction": "outbound",
+            "content_type": "text"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "message_id",
+              "displayName": "message_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "conversation_id",
+              "displayName": "conversation_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "direction",
+              "displayName": "direction",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "content_type",
+              "displayName": "content_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "raw_text",
+              "displayName": "raw_text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "image_url",
+              "displayName": "image_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ai_payload",
+              "displayName": "ai_payload",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "object",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "confidence",
+              "displayName": "confidence",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        1760,
+        464
+      ],
+      "id": "d1556b25-bd5a-448f-93ec-ad3c7d58b44f",
+      "name": "Log Outbound Message",
+      "credentials": {
+        "postgres": {
+          "id": "41xuS6HMVz5ZwsAI",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "event_log",
+          "mode": "list",
+          "cachedResultName": "event_log"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "conversation_id": "={{ $json.conversation_id }}",
+            "workflow_name": "Workflow 7b",
+            "status": "success",
+            "details": "={{ JSON.stringify($json) }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "correlation_id",
+              "displayName": "correlation_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "conversation_id",
+              "displayName": "conversation_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "workflow_name",
+              "displayName": "workflow_name",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "details",
+              "displayName": "details",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "object",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        1984,
+        464
+      ],
+      "id": "8fc675eb-2a81-4b4b-bb40-901e6f0a7c56",
+      "name": "Log Workflow Event",
+      "credentials": {
+        "postgres": {
+          "id": "41xuS6HMVz5ZwsAI",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "allam-2-7b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        592,
+        512
+      ],
+      "id": "5872c5d1-6267-4cdb-a1a2-df6668965710",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "mtBaX7qKmU8H6OQZ",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "XUVkqUN00VgsNhQW",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/XUVkqUN00VgsNhQW",
+          "cachedResultName": "WorkFlow-8 Order Creation+Branch Routing"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "conversation_id": "={{ $json.conversation_id }}",
+            "model": "={{ $json.model }}",
+            "quantity": "={{ $json.quantity }}",
+            "intent": "={{ $json.intent }}",
+            "product_id": "={{ $json.product_id }}"
+          },
+          "matchingColumns": [
+            ""
+          ],
+          "schema": [
+            {
+              "id": "conversation_id",
+              "displayName": "conversation_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "product_id",
+              "displayName": "product_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "model",
+              "displayName": "model",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "price",
+              "displayName": "price",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": true
+            },
+            {
+              "id": "quantity",
+              "displayName": "quantity",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "intent",
+              "displayName": "intent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        1760,
+        80
+      ],
+      "id": "a3349f67-946c-4d8a-9441-69cad1229915",
+      "name": "Execute Order Creation+Branch Routing WF"
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8000/v1/battery/search",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "={{ $json.model }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer demo-secret-key"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        1088,
+        272
+      ],
+      "id": "ccafaa51-309c-4571-a13d-da725ac37c90",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "message_id"
+            },
+            {
+              "name": "conversation_id"
+            },
+            {
+              "name": "raw_text"
+            },
+            {
+              "name": "image_url"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        64,
+        272
+      ],
+      "id": "44819f08-5c35-4475-8c09-71d3b01e02aa",
+      "name": "Query Intake"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        []
+      ]
+    },
+    "Input Customer Message": {
+      "main": [
+        [
+          {
+            "node": "Classify Intent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Classify Intent": {
+      "main": [
+        [
+          {
+            "node": "Parse Intent JSON",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Intent JSON": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route By Intent": {
+      "main": [
+        [
+          {
+            "node": "Order Confirmation Action",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create Human Review Task",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create Human Review Task",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create Human Review Task",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create Human Review Task",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build Clarification Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Clarification Response": {
+      "main": [
+        [
+          {
+            "node": "Log Outbound Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Outbound Message": {
+      "main": [
+        [
+          {
+            "node": "Log Workflow Event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Classify Intent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Order Confirmation Action": {
+      "main": [
+        [
+          {
+            "node": "Execute Order Creation+Branch Routing WF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Route By Intent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Query Intake": {
+      "main": [
+        [
+          {
+            "node": "Input Customer Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "3b333b6d-c02c-442c-b79f-9d9c9d1001c9",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "926f7712c13f878bfbbed3a3b14e61e5e04a958f45ea9ded2157a41f131ea22b"
+  },
+  "nodeGroups": [],
+  "id": "OiN3e9JpCadTE7un",
+  "tags": []
+}
