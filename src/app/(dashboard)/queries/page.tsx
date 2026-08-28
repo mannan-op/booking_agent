@@ -34,9 +34,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { useSimulatedLoading } from "@/hooks/use-simulated-loading"
+import { useLiveData } from "@/hooks/use-live-data"
 import { formatDate } from "@/lib/format"
-import { customerQueries } from "@/lib/mock-data"
 import type { CustomerQuery } from "@/types"
 
 const statusFilters = ["All", "Processing", "Completed", "Human Review"] as const
@@ -44,7 +43,10 @@ const statusFilters = ["All", "Processing", "Completed", "Human Review"] as cons
 type StatusFilter = (typeof statusFilters)[number]
 
 export default function QueriesPage() {
-  const isLoading = useSimulatedLoading()
+  const { data, isLoading, error } = useLiveData<{ queries: CustomerQuery[] }>(
+    "/api/queries",
+  )
+  const customerQueries = data?.queries ?? []
   const [search, setSearch] = useState("")
   const [status, setStatus] = useState<StatusFilter>("All")
   const [selected, setSelected] = useState<CustomerQuery | null>(null)
@@ -62,7 +64,7 @@ export default function QueriesPage() {
 
       return matchesStatus && matchesSearch
     })
-  }, [search, status])
+  }, [customerQueries, search, status])
 
   if (isLoading) {
     return (
@@ -86,6 +88,7 @@ export default function QueriesPage() {
         title="Customer queries"
         description="Incoming customer messages processed by the battery matching agent."
       />
+      {error ? <p className="text-sm text-destructive">{error}</p> : null}
       <Card>
         <CardHeader className="gap-4">
           <CardTitle>Query inbox</CardTitle>

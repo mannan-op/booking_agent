@@ -1,36 +1,67 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# VoltOps Battery Automation
 
-## Getting Started
+Admin dashboard for the laptop-battery sales prototype. n8n runs the existing automation workflows, Postgres stores operational + seeded IMS catalog data, and the mock IMS API serves the Section 21.1 contract.
 
-First, run the development server:
+## Demo today
+
+1. Copy env and add your LLM keys (Workflow 7B uses Gemini/Groq):
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cp .env.example .env.local
+# also used by docker compose:
+cp .env.example .env
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Set `GEMINI_API_KEY` (and optionally `GROQ_API_KEY`) in `.env` and `.env.local`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+2. Start Postgres, mock IMS, and n8n:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+docker compose up --build
+```
 
-## Learn More
+Wait until n8n logs `Editor is now accessible via: http://localhost:5678`.
 
-To learn more about Next.js, take a look at the following resources:
+3. Start the UI:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+pnpm install
+pnpm dev
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+4. Open [http://localhost:3000](http://localhost:3000), log in (`nina.v@example.com` / `demo123`), then:
 
-## Deploy on Vercel
+- **Inventory** — 25 products / 4 Lahore branches from the mock Excel dataset
+- **Analytics** — 90-day sales history
+- **Customer Queries** — inbound WhatsApp conversations after n8n intake
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## WhatsApp (customer chat)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The dashboard is for operators. Customers talk on WhatsApp. This prototype uses [WaAPI](https://waapi.app/) so you can scan a QR with a normal WhatsApp number instead of Meta Cloud API.
+
+1. Create an instance at [waapi.app](https://waapi.app/), scan the QR from WhatsApp, and copy the instance ID plus API token.
+2. Put these in `.env.local` (and restart `pnpm dev`):
+
+```bash
+WAAPI_TOKEN=your-waapi-token
+WAAPI_INSTANCE_ID=123
+WAAPI_WEBHOOK_SECRET=choose-a-long-random-string
+PUBLIC_APP_URL=https://your-public-https-host
+```
+
+3. Local webhooks need HTTPS. Example: `ngrok http 3000`, then set `PUBLIC_APP_URL` to the ngrok origin.
+4. In the WaAPI instance, set webhook URL to `https://your-public-https-host/api/whatsapp/webhook?token=WAAPI_WEBHOOK_SECRET` and subscribe to **message** only.
+5. Message the linked number from a customer phone. Operators see the thread on **Customer Queries**.
+
+If n8n replies fail, confirm Workflow 1 is active and `GEMINI_API_KEY` is loaded in the n8n container (`docker compose up -d --force-recreate n8n`).
+
+## Local URLs
+
+| Service | URL |
+|---|---|
+| Next.js | http://localhost:3000 |
+| n8n | http://localhost:5678 |
+| Mock IMS docs | http://localhost:8000/docs |
+| Postgres | localhost:5433 user/db `voltops` |
+
+First n8n visit may ask you to create an owner account. Webhooks still work after the CLI import. If chat fails, confirm Workflow 1 is active in n8n and `N8N_WEBHOOK_URL=http://localhost:5678/webhook/battery-query`.

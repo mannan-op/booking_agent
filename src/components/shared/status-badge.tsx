@@ -5,15 +5,15 @@ import type { OrderStatus, QueryStatus, StockAvailability } from "@/types"
 type StatusKind = QueryStatus | OrderStatus | StockAvailability
 
 const statusClassName: Record<StatusKind, string> = {
-  Processing: "border-transparent bg-sky-100 text-sky-800",
-  Completed: "border-transparent bg-emerald-100 text-emerald-800",
-  "Human Review": "border-transparent bg-amber-100 text-amber-900",
-  Pending: "border-transparent bg-slate-100 text-slate-700",
-  Confirmed: "border-transparent bg-indigo-100 text-indigo-800",
-  Delivered: "border-transparent bg-emerald-100 text-emerald-800",
-  "In Stock": "border-transparent bg-emerald-100 text-emerald-800",
-  "Low Stock": "border-transparent bg-amber-100 text-amber-900",
-  "Out of Stock": "border-transparent bg-red-100 text-red-800",
+  Processing: "border-sky-200 bg-sky-50 text-sky-800",
+  Completed: "border-emerald-200 bg-emerald-50 text-emerald-800",
+  "Human Review": "border-amber-200 bg-amber-50 text-amber-900",
+  Pending: "border-border bg-muted text-muted-foreground",
+  Confirmed: "border-primary/20 bg-primary/10 text-primary",
+  Delivered: "border-emerald-200 bg-emerald-50 text-emerald-800",
+  "In Stock": "border-emerald-200 bg-emerald-50 text-emerald-800",
+  "Low Stock": "border-amber-200 bg-amber-50 text-amber-900",
+  "Out of Stock": "border-red-200 bg-red-50 text-red-800",
 }
 
 function assertNever(value: never): never {

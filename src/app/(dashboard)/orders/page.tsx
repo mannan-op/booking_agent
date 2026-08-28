@@ -23,9 +23,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { useSimulatedLoading } from "@/hooks/use-simulated-loading"
+import { useLiveData } from "@/hooks/use-live-data"
 import { formatCurrency } from "@/lib/format"
-import { orders } from "@/lib/mock-data"
+import type { Order } from "@/types"
 
 const statusFilters = [
   "All",
@@ -38,7 +38,8 @@ const statusFilters = [
 type StatusFilter = (typeof statusFilters)[number]
 
 export default function OrdersPage() {
-  const isLoading = useSimulatedLoading()
+  const { data, isLoading, error } = useLiveData<{ orders: Order[] }>("/api/orders")
+  const orders = data?.orders ?? []
   const [status, setStatus] = useState<StatusFilter>("All")
 
   const filtered = useMemo(() => {
@@ -47,7 +48,7 @@ export default function OrdersPage() {
     }
 
     return orders.filter((order) => order.status === status)
-  }, [status])
+  }, [orders, status])
 
   if (isLoading) {
     return (
@@ -71,6 +72,7 @@ export default function OrdersPage() {
         title="Orders"
         description="Track battery fulfillment across all retail and warehouse branches."
       />
+      {error ? <p className="text-sm text-destructive">{error}</p> : null}
       <Card>
         <CardHeader className="flex-row items-center justify-between">
           <CardTitle>Order management</CardTitle>

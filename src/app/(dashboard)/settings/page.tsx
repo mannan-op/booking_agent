@@ -35,7 +35,7 @@ export default function SettingsPage() {
   const [compactTables, setCompactTables] = useState(false)
   const [autoAssign, setAutoAssign] = useState(true)
   const [branch, setBranch] = useState("Downtown Hub")
-  const [timezone, setTimezone] = useState("America/New_York")
+  const [timezone, setTimezone] = useState("Asia/Karachi")
 
   if (isLoading) {
     return <PageSkeleton />
@@ -50,6 +50,7 @@ export default function SettingsPage() {
       <Tabs defaultValue="profile">
         <TabsList>
           <TabsTrigger value="profile">User profile</TabsTrigger>
+          <TabsTrigger value="whatsapp">WhatsApp</TabsTrigger>
           <TabsTrigger value="notifications">Notifications</TabsTrigger>
           <TabsTrigger value="system">System preferences</TabsTrigger>
         </TabsList>
@@ -98,6 +99,7 @@ export default function SettingsPage() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
+                      <SelectItem value="Asia/Karachi">Pakistan Standard Time</SelectItem>
                       <SelectItem value="America/New_York">Eastern Time</SelectItem>
                       <SelectItem value="America/Chicago">Central Time</SelectItem>
                       <SelectItem value="America/Los_Angeles">Pacific Time</SelectItem>
@@ -118,6 +120,33 @@ export default function SettingsPage() {
               >
                 Save profile
               </Button>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        <TabsContent value="whatsapp" className="mt-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>WhatsApp via WaAPI</CardTitle>
+              <CardDescription>
+                Customer chat lives on WhatsApp. Link a number in WaAPI, then put the instance credentials in `.env.local`.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3 text-sm text-muted-foreground">
+              <p>
+                Required: <span className="font-medium text-foreground">WAAPI_TOKEN</span>,{" "}
+                <span className="font-medium text-foreground">WAAPI_INSTANCE_ID</span>,{" "}
+                <span className="font-medium text-foreground">WAAPI_WEBHOOK_SECRET</span>, and a public{" "}
+                <span className="font-medium text-foreground">PUBLIC_APP_URL</span>.
+              </p>
+              <p>
+                WaAPI webhook URL is <span className="font-medium text-foreground">/api/whatsapp/webhook?token=…</span>.
+                Subscribe to the <span className="font-medium text-foreground">message</span> event only. Inbound
+                threads show up under Customer Queries.
+              </p>
+              <p>
+                WaAPI trial accounts can only send replies to the phone number they registered. Message the linked
+                WhatsApp from that same trial number, or the reply will be rejected.
+              </p>
             </CardContent>
           </Card>
         </TabsContent>

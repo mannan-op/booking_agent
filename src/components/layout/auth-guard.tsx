@@ -5,11 +5,15 @@ import { useEffect, useSyncExternalStore } from "react"
 import { useRouter } from "next/navigation"
 
 import { PageSkeleton } from "@/components/shared/table-skeleton"
-import { isAuthenticated } from "@/lib/auth"
+import { AUTH_EVENT, isAuthenticated } from "@/lib/auth"
 
 function subscribe(callback: () => void) {
   window.addEventListener("storage", callback)
-  return () => window.removeEventListener("storage", callback)
+  window.addEventListener(AUTH_EVENT, callback)
+  return () => {
+    window.removeEventListener("storage", callback)
+    window.removeEventListener(AUTH_EVENT, callback)
+  }
 }
 
 function getSnapshot() {

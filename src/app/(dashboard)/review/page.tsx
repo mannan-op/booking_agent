@@ -21,54 +21,73 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Skeleton } from "@/components/ui/skeleton"
-import { useSimulatedLoading } from "@/hooks/use-simulated-loading"
-import { reviewQueue } from "@/lib/mock-data"
+import { useLiveData } from "@/hooks/use-live-data"
 import type { ReviewRequest } from "@/types"
 
 export default function HumanReviewPage() {
-  const isLoading = useSimulatedLoading()
-  const [queue, setQueue] = useState(reviewQueue)
+  const { data, isLoading, error, reload } = useLiveData<{ reviews: ReviewRequest[] }>(
+    "/api/reviews",
+  )
+  const queue = data?.reviews ?? []
   const [editing, setEditing] = useState<ReviewRequest | null>(null)
 
-  function removeFromQueue(id: string) {
-    setQueue((current) => current.filter((item) => item.id !== id))
+  async function persist(id: string, action: "approve" | "reject" | "update", extracted?: ReviewRequest["extracted"]) {
+    const response = await fetch(`/api/reviews/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action, extracted }),
+    })
+    const body = (await response.json()) as { error?: string }
+    if (!response.ok) {
+      throw new Error(body.error || "Unable to update review")
+    }
   }
 
-  function handleApprove(item: ReviewRequest) {
-    removeFromQueue(item.id)
-    toast.success(`Approved ${item.id} for ${item.customerName}`)
+  async function handleApprove(item: ReviewRequest) {
+    try {
+      await persist(item.id, "approve")
+      toast.success(`Approved ${item.id} for ${item.customerName}`)
+      await reload()
+    } catch (caught) {
+      toast.error(caught instanceof Error ? caught.message : "Approve failed")
+    }
   }
 
-  function handleReject(item: ReviewRequest) {
-    removeFromQueue(item.id)
-    toast.error(`Rejected ${item.id}`)
+  async function handleReject(item: ReviewRequest) {
+    try {
+      await persist(item.id, "reject")
+      toast.error(`Rejected ${item.id}`)
+      await reload()
+    } catch (caught) {
+      toast.error(caught instanceof Error ? caught.message : "Reject failed")
+    }
   }
 
-  function handleSaveEdit(event: FormEvent<HTMLFormElement>) {
+  async function handleSaveEdit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     if (!editing) {
       return
     }
 
     const form = new FormData(event.currentTarget)
-    const updated: ReviewRequest = {
-      ...editing,
-      extracted: {
-        brand: String(form.get("brand") ?? editing.extracted.brand),
-        laptopModel: String(form.get("laptopModel") ?? editing.extracted.laptopModel),
-        batteryModel: String(form.get("batteryModel") ?? editing.extracted.batteryModel),
-        specification: String(
-          form.get("specification") ?? editing.extracted.specification
-        ),
-        quantity: Number(form.get("quantity") ?? editing.extracted.quantity),
-      },
+    const extracted = {
+      brand: String(form.get("brand") ?? editing.extracted.brand),
+      laptopModel: String(form.get("laptopModel") ?? editing.extracted.laptopModel),
+      batteryModel: String(form.get("batteryModel") ?? editing.extracted.batteryModel),
+      specification: String(
+        form.get("specification") ?? editing.extracted.specification
+      ),
+      quantity: Number(form.get("quantity") ?? editing.extracted.quantity),
     }
 
-    setQueue((current) =>
-      current.map((item) => (item.id === updated.id ? updated : item))
-    )
-    setEditing(null)
-    toast.success("Extracted information updated")
+    try {
+      await persist(editing.id, "update", extracted)
+      setEditing(null)
+      toast.success("Extracted information updated")
+      await reload()
+    } catch (caught) {
+      toast.error(caught instanceof Error ? caught.message : "Save failed")
+    }
   }
 
   if (isLoading) {
@@ -92,6 +111,7 @@ export default function HumanReviewPage() {
         title="Human review"
         description="Verify low-confidence AI extractions before inventory matching."
       />
+      {error ? <p className="text-sm text-destructive">{error}</p> : null}
       {queue.length === 0 ? (
         <EmptyState
           icon={ClipboardCheck}

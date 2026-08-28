@@ -20,13 +20,8 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart"
-import { useSimulatedLoading } from "@/hooks/use-simulated-loading"
-import {
-  orderCompletion,
-  queryStats,
-  salesOverview,
-  topBatteryModels,
-} from "@/lib/mock-data"
+import { useLiveData } from "@/hooks/use-live-data"
+import type { BatterySalesShare, QueryStat, SalesPoint } from "@/types"
 
 const salesConfig = {
   revenue: { label: "Revenue", color: "var(--chart-1)" },
@@ -44,10 +39,24 @@ const queryConfig = {
 } satisfies ChartConfig
 
 export default function AnalyticsPage() {
-  const isLoading = useSimulatedLoading(600)
+  const { data, isLoading, error } = useLiveData<{
+    salesOverview: SalesPoint[]
+    topBatteryModels: BatterySalesShare[]
+    queryStats: QueryStat[]
+    orderCompletion: { completed: number; pending: number; cancelled: number }
+  }>("/api/analytics")
 
   if (isLoading) {
     return <PageSkeleton />
+  }
+
+  const salesOverview = data?.salesOverview ?? []
+  const topBatteryModels = data?.topBatteryModels ?? []
+  const queryStats = data?.queryStats ?? []
+  const orderCompletion = data?.orderCompletion ?? {
+    completed: 0,
+    pending: 0,
+    cancelled: 0,
   }
 
   return (
@@ -56,6 +65,7 @@ export default function AnalyticsPage() {
         title="Analytics"
         description="Sales performance, query throughput, and fulfillment quality."
       />
+      {error ? <p className="text-sm text-destructive">{error}</p> : null}
       <div className="grid gap-4 xl:grid-cols-3">
         <Card className="xl:col-span-2">
           <CardHeader>

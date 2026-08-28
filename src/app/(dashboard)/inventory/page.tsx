@@ -18,11 +18,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { useSimulatedLoading } from "@/hooks/use-simulated-loading"
-import { inventory } from "@/lib/mock-data"
+import { useLiveData } from "@/hooks/use-live-data"
+import type { InventoryItem } from "@/types"
 
 export default function InventoryPage() {
-  const isLoading = useSimulatedLoading()
+  const { data, isLoading, error } = useLiveData<{ inventory: InventoryItem[] }>(
+    "/api/inventory",
+  )
+  const inventory = data?.inventory ?? []
   const [search, setSearch] = useState("")
 
   const filtered = useMemo(() => {
@@ -37,7 +40,7 @@ export default function InventoryPage() {
         item.compatibleLaptop.toLowerCase().includes(term) ||
         item.branch.toLowerCase().includes(term)
     )
-  }, [search])
+  }, [inventory, search])
 
   const totalUnits = inventory.reduce((sum, item) => sum + item.stockQuantity, 0)
   const lowStock = inventory.filter((item) => item.availability === "Low Stock").length
@@ -71,6 +74,7 @@ export default function InventoryPage() {
         title="Inventory"
         description="Battery stock by model, compatible laptop, and branch."
       />
+      {error ? <p className="text-sm text-destructive">{error}</p> : null}
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StockCard
           icon={Package}

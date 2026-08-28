@@ -1,13 +1,19 @@
 import type { Metadata } from "next"
-import { Geist, Geist_Mono } from "next/font/google"
+import { Geist_Mono, Outfit, Syne } from "next/font/google"
 
 import { Providers } from "@/components/providers"
 
 import "./globals.css"
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const outfit = Outfit({
+  variable: "--font-outfit",
   subsets: ["latin"],
+})
+
+const syne = Syne({
+  variable: "--font-syne",
+  subsets: ["latin"],
+  weight: ["500", "600", "700", "800"],
 })
 
 const geistMono = Geist_Mono({
@@ -21,14 +27,14 @@ export const metadata: Metadata = {
     template: "%s · VoltOps",
   },
   description:
-    "Enterprise dashboard for AI-based laptop battery sales automation.",
+    "Premium operations console for AI laptop-battery sales automation.",
 }
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${outfit.variable} ${syne.variable} ${geistMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <body className="min-h-full bg-background font-sans text-foreground">

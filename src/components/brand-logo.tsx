@@ -14,11 +14,11 @@ export function BrandLogo({
   inverted = false,
 }: BrandLogoProps) {
   return (
-    <div className={cn("flex items-center gap-2.5", className)}>
+    <div className={cn("flex items-center gap-3", className)}>
       <span
         className={cn(
-          "flex size-9 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm",
-          inverted && "bg-sidebar-primary text-sidebar-primary-foreground"
+          "relative flex size-10 items-center justify-center rounded-xl bg-linear-to-br from-primary to-[oklch(0.42_0.12_50)] text-primary-foreground shadow-[0_8px_24px_oklch(0.52_0.13_55_/_0.28)]",
+          inverted && "from-sidebar-primary to-[oklch(0.58_0.14_55)] text-sidebar-primary-foreground"
         )}
       >
         <BatteryCharging className="size-5" />
@@ -27,7 +27,7 @@ export function BrandLogo({
         <span className="flex flex-col leading-tight">
           <span
             className={cn(
-              "text-sm font-semibold tracking-tight",
+              "font-heading text-[15px] font-semibold tracking-tight",
               inverted ? "text-sidebar-foreground" : "text-foreground"
             )}
           >
@@ -35,11 +35,11 @@ export function BrandLogo({
           </span>
           <span
             className={cn(
-              "text-[11px]",
-              inverted ? "text-sidebar-foreground/65" : "text-muted-foreground"
+              "text-[11px] tracking-[0.18em] uppercase",
+              inverted ? "text-sidebar-foreground/55" : "text-muted-foreground"
             )}
           >
-            Battery Sales AI
+            Battery Sales
           </span>
         </span>
       ) : null}

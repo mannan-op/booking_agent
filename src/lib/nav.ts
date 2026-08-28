@@ -16,12 +16,32 @@ export type NavItem = {
   badge?: number
 }
 
-export const navItems: NavItem[] = [
-  { title: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-  { title: "Customer Queries", href: "/queries", icon: MessageSquareText, badge: 18 },
-  { title: "Human Review", href: "/review", icon: ClipboardCheck, badge: 3 },
-  { title: "Orders", href: "/orders", icon: ShoppingCart },
-  { title: "Inventory", href: "/inventory", icon: Package },
-  { title: "Analytics", href: "/analytics", icon: BarChart3 },
-  { title: "Settings", href: "/settings", icon: Settings },
+export type NavGroup = {
+  label: string
+  items: NavItem[]
+}
+
+export const navGroups: NavGroup[] = [
+  {
+    label: "Workspace",
+    items: [
+      { title: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+    ],
+  },
+  {
+    label: "Commerce",
+    items: [
+      { title: "Customer Queries", href: "/queries", icon: MessageSquareText },
+      { title: "Human Review", href: "/review", icon: ClipboardCheck },
+      { title: "Orders", href: "/orders", icon: ShoppingCart },
+      { title: "Inventory", href: "/inventory", icon: Package },
+      { title: "Analytics", href: "/analytics", icon: BarChart3 },
+    ],
+  },
+  {
+    label: "System",
+    items: [{ title: "Settings", href: "/settings", icon: Settings }],
+  },
 ]
+
+export const navItems: NavItem[] = navGroups.flatMap((group) => group.items)

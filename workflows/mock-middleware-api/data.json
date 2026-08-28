@@ -1,0 +1,1959 @@
+{
+  "branches": [
+    {
+      "branch_id": "BR01",
+      "branch_name": "Gulberg Main Store",
+      "address": "MM Alam Road, Gulberg III, Lahore",
+      "phone": "+92-42-35761234",
+      "is_active": true
+    },
+    {
+      "branch_id": "BR02",
+      "branch_name": "DHA Phase 5 Branch",
+      "address": "Y Block Commercial, DHA Phase 5, Lahore",
+      "phone": "+92-42-37181234",
+      "is_active": true
+    },
+    {
+      "branch_id": "BR03",
+      "branch_name": "Hafeez Center Branch",
+      "address": "Hafeez Center, Gulberg, Lahore",
+      "phone": "+92-42-35789012",
+      "is_active": true
+    },
+    {
+      "branch_id": "BR04",
+      "branch_name": "Johar Town Branch",
+      "address": "Main Boulevard, Johar Town, Lahore",
+      "phone": "+92-42-35301234",
+      "is_active": true
+    }
+  ],
+  "products": [
+    {
+      "product_id": "P0001",
+      "model": "HT03XL",
+      "part_number": "854108-850",
+      "brand": "HP",
+      "laptop_model_hint": "HP EliteBook 840 G5/G6",
+      "voltage": "11.55V",
+      "capacity_wh": "48.05",
+      "category": "Laptop Battery",
+      "status": "active"
+    },
+    {
+      "product_id": "P0002",
+      "model": "ST03XL",
+      "part_number": "800514-001",
+      "brand": "HP",
+      "laptop_model_hint": "HP EliteBook 840 G3/G4",
+      "voltage": "11.4V",
+      "capacity_wh": "46.5",
+      "category": "Laptop Battery",
+      "status": "inactive"
+    },
+    {
+      "product_id": "P0003",
+      "model": "TF03XL",
+      "part_number": "920046-421",
+      "brand": "HP",
+      "laptop_model_hint": "HP Pavilion 15",
+      "voltage": "11.55V",
+      "capacity_wh": "41.7",
+      "category": "Laptop Battery",
+      "status": "active"
+    },
+    {
+      "product_id": "P0004",
+      "model": "RR03XL",
+      "part_number": "851610-850",
+      "brand": "HP",
+      "laptop_model_hint": "HP ProBook 450 G5",
+      "voltage": "11.55V",
+      "capacity_wh": "48",
+      "category": "Laptop Battery",
+      "status": "active"
+    },
+    {
+      "product_id": "P0005",
+      "model": "BG06XL",
+      "part_number": "902401-2C1",
+      "brand": "HP",
+      "laptop_model_hint": "HP Spectre x360 13",
+      "voltage": "7.7V",
+      "capacity_wh": "60.9",
+      "category": "Laptop Battery",
+      "status": "active"
+    },
+    {
+      "product_id": "P0006",
+      "model": "93FTF",
+      "part_number": "0FXJVY",
+      "brand": "Dell",
+      "laptop_model_hint": "Dell Latitude 5490/5590",
+      "voltage": "11.4V",
+      "capacity_wh": "42",
+      "category": "Laptop Battery",
+      "status": "active"
+    },
+    {
+      "product_id": "P0007",
+      "model": "PGYP4",
+      "part_number": "0PGYP4",
+      "brand": "Dell",
+      "laptop_model_hint": "Dell Latitude 7480/7490",
+      "voltage": "7.6V",
+      "capacity_wh": "55.6",
+      "category": "Laptop Battery",
+      "status": "active"
+    },
+    {
+      "product_id": "P0008",
+      "model": "JD25G",
+      "part_number": "0JD25G",
+      "brand": "Dell",
+      "laptop_model_hint": "Dell XPS 13 9360",
+      "voltage": "7.4V",
+      "capacity_wh": "56",
+      "category": "Laptop Battery",
+      "status": "active"
+    },
+    {
+      "product_id": "P0009",
+      "model": "3VC9Y",
+      "part_number": "03VC9Y",
+      "brand": "Dell",
+      "laptop_model_hint": "Dell Inspiron 15 3000",
+      "voltage": "11.4V",
+      "capacity_wh": "42",
+      "category": "Laptop Battery",
+      "status": "active"
+    },
+    {
+      "product_id": "P0010",
+      "model": "34GKR",
+      "part_number": "034GKR",
+      "brand": "Dell",
+      "laptop_model_hint": "Dell Latitude E7450",
+      "voltage": "7.4V",
+      "capacity_wh": "47",
+      "category": "Laptop Battery",
+      "status": "inactive"
+    },
+    {
+      "product_id": "P0011",
+      "model": "01AV429",
+      "part_number": "01AV430",
+      "brand": "Lenovo",
+      "laptop_model_hint": "Lenovo ThinkPad T480",
+      "voltage": "11.4V",
+      "capacity_wh": "48",
+      "category": "Laptop Battery",
+      "status": "active"
+    },
+    {
+      "product_id": "P0012",
+      "model": "00HW020",
+      "part_number": "00HW021",
+      "brand": "Lenovo",
+      "laptop_model_hint": "Lenovo ThinkPad X260/X270",
+      "voltage": "11.4V",
+      "capacity_wh": "23.5",
+      "category": "Laptop Battery",
+      "status": "active"
+    },
+    {
+      "product_id": "P0013",
+      "model": "L19M3PC1",
+      "part_number": "5B10W51864",
+      "brand": "Lenovo",
+      "laptop_model_hint": "Lenovo ThinkPad E14/E15",
+      "voltage": "11.34V",
+      "capacity_wh": "45",
+      "category": "Laptop Battery",
+      "status": "inactive"
+    },
+    {
+      "product_id": "P0014",
+      "model": "L16M2PB1",
+      "part_number": "5B10W67260",
+      "brand": "Lenovo",
+      "laptop_model_hint": "Lenovo IdeaPad 320/330",
+      "voltage": "11.1V",
+      "capacity_wh": "30",
+      "category": "Laptop Battery",
+      "status": "active"
+    },
+    {
+      "product_id": "P0015",
+      "model": "L19L3PD1",
+      "part_number": "02DL007",
+      "brand": "Lenovo",
+      "laptop_model_hint": "Lenovo ThinkPad T14",
+      "voltage": "15.36V",
+      "capacity_wh": "51.5",
+      "category": "Laptop Battery",
+      "status": "active"
+    },
+    {
+      "product_id": "P0016",
+      "model": "B31N1637",
+      "part_number": "0B200-02510000",
+      "brand": "Asus",
+      "laptop_model_hint": "Asus VivoBook X441",
+      "voltage": "11.52V",
+      "capacity_wh": "36",
+      "category": "Laptop Battery",
+      "status": "active"
+    },
+    {
+      "product_id": "P0017",
+      "model": "C31N1620",
+      "part_number": "0B200-02180000",
+      "brand": "Asus",
+      "laptop_model_hint": "Asus ZenBook UX430",
+      "voltage": "11.55V",
+      "capacity_wh": "50",
+      "category": "Laptop Battery",
+      "status": "active"
+    },
+    {
+      "product_id": "P0018",
+      "model": "A32-K55",
+      "part_number": "A32-K55",
+      "brand": "Asus",
+      "laptop_model_hint": "Asus X series general",
+      "voltage": "10.8V",
+      "capacity_wh": "56",
+      "category": "Laptop Battery",
+      "status": "active"
+    },
+    {
+      "product_id": "P0019",
+      "model": "AP16M5J",
+      "part_number": "KT.00205.005",
+      "brand": "Acer",
+      "laptop_model_hint": "Acer Aspire E15",
+      "voltage": "11.4V",
+      "capacity_wh": "48.87",
+      "category": "Laptop Battery",
+      "status": "active"
+    },
+    {
+      "product_id": "P0020",
+      "model": "AP18C4K",
+      "part_number": "KT0030G013",
+      "brand": "Acer",
+      "laptop_model_hint": "Acer Swift 3",
+      "voltage": "15.4V",
+      "capacity_wh": "48",
+      "category": "Laptop Battery",
+      "status": "inactive"
+    },
+    {
+      "product_id": "P0021",
+      "model": "AS16A5K",
+      "part_number": "KT.0040G.001",
+      "brand": "Acer",
+      "laptop_model_hint": "Acer TravelMate",
+      "voltage": "10.95V",
+      "capacity_wh": "47.52",
+      "category": "Laptop Battery",
+      "status": "active"
+    },
+    {
+      "product_id": "P0022",
+      "model": "PA5109U-1BRS",
+      "part_number": "PA5109U-1BRS",
+      "brand": "Toshiba",
+      "laptop_model_hint": "Toshiba Satellite C series",
+      "voltage": "10.8V",
+      "capacity_wh": "45",
+      "category": "Laptop Battery",
+      "status": "active"
+    },
+    {
+      "product_id": "P0023",
+      "model": "VGP-BPS35A",
+      "part_number": "VGP-BPS35A",
+      "brand": "Sony",
+      "laptop_model_hint": "Sony Vaio SVF series",
+      "voltage": "10.8V",
+      "capacity_wh": "31",
+      "category": "Laptop Battery",
+      "status": "active"
+    },
+    {
+      "product_id": "P0024",
+      "model": "BTY-M6H",
+      "part_number": "BTY-M6H",
+      "brand": "MSI",
+      "laptop_model_hint": "MSI GF63",
+      "voltage": "11.4V",
+      "capacity_wh": "51.2",
+      "category": "Laptop Battery",
+      "status": "active"
+    },
+    {
+      "product_id": "P0025",
+      "model": "AA-PBYN8AB",
+      "part_number": "AA-PBYN8AB",
+      "brand": "Samsung",
+      "laptop_model_hint": "Samsung NP series",
+      "voltage": "7.7V",
+      "capacity_wh": "39.7",
+      "category": "Laptop Battery",
+      "status": "active"
+    }
+  ],
+  "aliases": [
+    {
+      "product_id": "P0001",
+      "alias_part_number": "HSTNN-IB7J"
+    },
+    {
+      "product_id": "P0001",
+      "alias_part_number": "854108-855"
+    },
+    {
+      "product_id": "P0006",
+      "alias_part_number": "451-BBZG"
+    },
+    {
+      "product_id": "P0011",
+      "alias_part_number": "01AV431"
+    },
+    {
+      "product_id": "P0011",
+      "alias_part_number": "SB10K97587"
+    },
+    {
+      "product_id": "P0016",
+      "alias_part_number": "0B110-00430000"
+    }
+  ],
+  "stock": [
+    {
+      "product_id": "P0001",
+      "branch_id": "BR01",
+      "quantity": 0,
+      "reserved_qty": 0,
+      "last_updated": "2026-07-30 04:59:18"
+    },
+    {
+      "product_id": "P0001",
+      "branch_id": "BR02",
+      "quantity": 0,
+      "reserved_qty": 0,
+      "last_updated": "2026-07-31 04:59:18"
+    },
+    {
+      "product_id": "P0001",
+      "branch_id": "BR03",
+      "quantity": 20,
+      "reserved_qty": 0,
+      "last_updated": "2026-07-29 04:59:18"
+    },
+    {
+      "product_id": "P0001",
+      "branch_id": "BR04",
+      "quantity": 5,
+      "reserved_qty": 0,
+      "last_updated": "2026-07-28 04:59:18"
+    },
+    {
+      "product_id": "P0002",
+      "branch_id": "BR01",
+      "quantity": 12,
+      "reserved_qty": 0,
+      "last_updated": "2026-07-27 04:59:18"
+    },
+    {
+      "product_id": "P0002",
+      "branch_id": "BR02",
+      "quantity": 0,
+      "reserved_qty": 0,
+      "last_updated": "2026-08-05 04:59:18"
+    },
+    {
+      "product_id": "P0002",
+      "branch_id": "BR03",
+      "quantity": 20,
+      "reserved_qty": 0,
+      "last_updated": "2026-08-04 04:59:18"
+    },
+    {
+      "product_id": "P0002",
+      "branch_id": "BR04",
+      "quantity": 0,
+      "reserved_qty": 0,
+      "last_updated": "2026-07-30 04:59:18"
+    },
+    {
+      "product_id": "P0003",
+      "branch_id": "BR01",
+      "quantity": 12,
+      "reserved_qty": 0,
+      "last_updated": "2026-08-03 04:59:18"
+    },
+    {
+      "product_id": "P0003",
+      "branch_id": "BR02",
+      "quantity": 2,
+      "reserved_qty": 0,
+      "last_updated": "2026-07-26 04:59:18"
+    },
+    {
+      "product_id": "P0003",
+      "branch_id": "BR03",
+      "quantity": 10,
+      "reserved_qty": 0,
+      "last_updated": "2026-07-28 04:59:18"
+    },
+    {
+      "product_id": "P0003",
+      "branch_id": "BR04",
+      "quantity": 1,
+      "reserved_qty": 1,
+      "last_updated": "2026-07-30 04:59:18"
+    },
+    {
+      "product_id": "P0004",
+      "branch_id": "BR01",
+      "quantity": 12,
+      "reserved_qty": 0,
+      "last_updated": "2026-07-26 04:59:18"
+    },
+    {
+      "product_id": "P0004",
+      "branch_id": "BR02",
+      "quantity": 20,
+      "reserved_qty": 0,
+      "last_updated": "2026-08-02 04:59:18"
+    },
+    {
+      "product_id": "P0004",
+      "branch_id": "BR03",
+      "quantity": 20,
+      "reserved_qty": 0,
+      "last_updated": "2026-07-30 04:59:18"
+    },
+    {
+      "product_id": "P0004",
+      "branch_id": "BR04",
+      "quantity": 2,
+      "reserved_qty": 0,
+      "last_updated": "2026-08-02 04:59:18"
+    },
+    {
+      "product_id": "P0005",
+      "branch_id": "BR01",
+      "quantity": 5,
+      "reserved_qty": 1,
+      "last_updated": "2026-08-03 04:59:18"
+    },
+    {
+      "product_id": "P0005",
+      "branch_id": "BR02",
+      "quantity": 2,
+      "reserved_qty": 0,
+      "last_updated": "2026-07-27 04:59:18"
+    },
+    {
+      "product_id": "P0005",
+      "branch_id": "BR03",
+      "quantity": 10,
+      "reserved_qty": 1,
+      "last_updated": "2026-07-31 04:59:18"
+    },
+    {
+      "product_id": "P0005",
+      "branch_id": "BR04",
+      "quantity": 1,
+      "reserved_qty": 1,
+      "last_updated": "2026-08-04 04:59:18"
+    },
+    {
+      "product_id": "P0006",
+      "branch_id": "BR01",
+      "quantity": 0,
+      "reserved_qty": 0,
+      "last_updated": "2026-08-03 04:59:18"
+    },
+    {
+      "product_id": "P0006",
+      "branch_id": "BR02",
+      "quantity": 20,
+      "reserved_qty": 1,
+      "last_updated": "2026-07-27 04:59:18"
+    },
+    {
+      "product_id": "P0006",
+      "branch_id": "BR03",
+      "quantity": 0,
+      "reserved_qty": 0,
+      "last_updated": "2026-07-30 04:59:18"
+    },
+    {
+      "product_id": "P0006",
+      "branch_id": "BR04",
+      "quantity": 6,
+      "reserved_qty": 0,
+      "last_updated": "2026-07-28 04:59:18"
+    },
+    {
+      "product_id": "P0007",
+      "branch_id": "BR01",
+      "quantity": 0,
+      "reserved_qty": 0,
+      "last_updated": "2026-07-26 04:59:18"
+    },
+    {
+      "product_id": "P0007",
+      "branch_id": "BR02",
+      "quantity": 12,
+      "reserved_qty": 0,
+      "last_updated": "2026-07-26 04:59:18"
+    },
+    {
+      "product_id": "P0007",
+      "branch_id": "BR03",
+      "quantity": 3,
+      "reserved_qty": 1,
+      "last_updated": "2026-08-03 04:59:18"
+    },
+    {
+      "product_id": "P0007",
+      "branch_id": "BR04",
+      "quantity": 15,
+      "reserved_qty": 0,
+      "last_updated": "2026-07-28 04:59:18"
+    },
+    {
+      "product_id": "P0008",
+      "branch_id": "BR01",
+      "quantity": 8,
+      "reserved_qty": 0,
+      "last_updated": "2026-07-26 04:59:18"
+    },
+    {
+      "product_id": "P0008",
+      "branch_id": "BR02",
+      "quantity": 12,
+      "reserved_qty": 0,
+      "last_updated": "2026-08-03 04:59:18"
+    },
+    {
+      "product_id": "P0008",
+      "branch_id": "BR03",
+      "quantity": 1,
+      "reserved_qty": 0,
+      "last_updated": "2026-07-27 04:59:18"
+    },
+    {
+      "product_id": "P0008",
+      "branch_id": "BR04",
+      "quantity": 0,
+      "reserved_qty": 0,
+      "last_updated": "2026-08-04 04:59:18"
+    },
+    {
+      "product_id": "P0009",
+      "branch_id": "BR01",
+      "quantity": 20,
+      "reserved_qty": 0,
+      "last_updated": "2026-08-02 04:59:18"
+    },
+    {
+      "product_id": "P0009",
+      "branch_id": "BR02",
+      "quantity": 0,
+      "reserved_qty": 0,
+      "last_updated": "2026-07-27 04:59:18"
+    },
+    {
+      "product_id": "P0009",
+      "branch_id": "BR03",
+      "quantity": 0,
+      "reserved_qty": 0,
+      "last_updated": "2026-07-29 04:59:18"
+    },
+    {
+      "product_id": "P0009",
+      "branch_id": "BR04",
+      "quantity": 20,
+      "reserved_qty": 0,
+      "last_updated": "2026-08-03 04:59:18"
+    },
+    {
+      "product_id": "P0010",
+      "branch_id": "BR01",
+      "quantity": 8,
+      "reserved_qty": 0,
+      "last_updated": "2026-08-01 04:59:18"
+    },
+    {
+      "product_id": "P0010",
+      "branch_id": "BR02",
+      "quantity": 10,
+      "reserved_qty": 1,
+      "last_updated": "2026-08-02 04:59:18"
+    },
+    {
+      "product_id": "P0010",
+      "branch_id": "BR03",
+      "quantity": 20,
+      "reserved_qty": 0,
+      "last_updated": "2026-08-01 04:59:18"
+    },
+    {
+      "product_id": "P0010",
+      "branch_id": "BR04",
+      "quantity": 12,
+      "reserved_qty": 0,
+      "last_updated": "2026-07-29 04:59:18"
+    },
+    {
+      "product_id": "P0011",
+      "branch_id": "BR01",
+      "quantity": 6,
+      "reserved_qty": 0,
+      "last_updated": "2026-08-02 04:59:18"
+    },
+    {
+      "product_id": "P0011",
+      "branch_id": "BR02",
+      "quantity": 4,
+      "reserved_qty": 0,
+      "last_updated": "2026-07-27 04:59:18"
+    },
+    {
+      "product_id": "P0011",
+      "branch_id": "BR03",
+      "quantity": 10,
+      "reserved_qty": 0,
+      "last_updated": "2026-08-05 04:59:18"
+    },
+    {
+      "product_id": "P0011",
+      "branch_id": "BR04",
+      "quantity": 0,
+      "reserved_qty": 0,
+      "last_updated": "2026-07-26 04:59:18"
+    },
+    {
+      "product_id": "P0012",
+      "branch_id": "BR01",
+      "quantity": 0,
+      "reserved_qty": 0,
+      "last_updated": "2026-08-04 04:59:18"
+    },
+    {
+      "product_id": "P0012",
+      "branch_id": "BR02",
+      "quantity": 4,
+      "reserved_qty": 0,
+      "last_updated": "2026-07-28 04:59:18"
+    },
+    {
+      "product_id": "P0012",
+      "branch_id": "BR03",
+      "quantity": 12,
+      "reserved_qty": 1,
+      "last_updated": "2026-08-02 04:59:18"
+    },
+    {
+      "product_id": "P0012",
+      "branch_id": "BR04",
+      "quantity": 15,
+      "reserved_qty": 1,
+      "last_updated": "2026-08-02 04:59:18"
+    },
+    {
+      "product_id": "P0013",
+      "branch_id": "BR01",
+      "quantity": 20,
+      "reserved_qty": 1,
+      "last_updated": "2026-08-02 04:59:18"
+    },
+    {
+      "product_id": "P0013",
+      "branch_id": "BR02",
+      "quantity": 0,
+      "reserved_qty": 0,
+      "last_updated": "2026-07-26 04:59:18"
+    },
+    {
+      "product_id": "P0013",
+      "branch_id": "BR03",
+      "quantity": 5,
+      "reserved_qty": 1,
+      "last_updated": "2026-07-29 04:59:18"
+    },
+    {
+      "product_id": "P0013",
+      "branch_id": "BR04",
+      "quantity": 0,
+      "reserved_qty": 0,
+      "last_updated": "2026-07-26 04:59:18"
+    },
+    {
+      "product_id": "P0014",
+      "branch_id": "BR01",
+      "quantity": 12,
+      "reserved_qty": 0,
+      "last_updated": "2026-08-05 04:59:18"
+    },
+    {
+      "product_id": "P0014",
+      "branch_id": "BR02",
+      "quantity": 4,
+      "reserved_qty": 0,
+      "last_updated": "2026-08-02 04:59:18"
+    },
+    {
+      "product_id": "P0014",
+      "branch_id": "BR03",
+      "quantity": 8,
+      "reserved_qty": 1,
+      "last_updated": "2026-08-03 04:59:18"
+    },
+    {
+      "product_id": "P0014",
+      "branch_id": "BR04",
+      "quantity": 3,
+      "reserved_qty": 1,
+      "last_updated": "2026-08-02 04:59:18"
+    },
+    {
+      "product_id": "P0015",
+      "branch_id": "BR01",
+      "quantity": 0,
+      "reserved_qty": 0,
+      "last_updated": "2026-07-29 04:59:18"
+    },
+    {
+      "product_id": "P0015",
+      "branch_id": "BR02",
+      "quantity": 8,
+      "reserved_qty": 0,
+      "last_updated": "2026-08-05 04:59:18"
+    },
+    {
+      "product_id": "P0015",
+      "branch_id": "BR03",
+      "quantity": 8,
+      "reserved_qty": 0,
+      "last_updated": "2026-08-04 04:59:18"
+    },
+    {
+      "product_id": "P0015",
+      "branch_id": "BR04",
+      "quantity": 2,
+      "reserved_qty": 0,
+      "last_updated": "2026-07-30 04:59:18"
+    },
+    {
+      "product_id": "P0016",
+      "branch_id": "BR01",
+      "quantity": 2,
+      "reserved_qty": 1,
+      "last_updated": "2026-08-05 04:59:18"
+    },
+    {
+      "product_id": "P0016",
+      "branch_id": "BR02",
+      "quantity": 0,
+      "reserved_qty": 0,
+      "last_updated": "2026-07-30 04:59:18"
+    },
+    {
+      "product_id": "P0016",
+      "branch_id": "BR03",
+      "quantity": 20,
+      "reserved_qty": 1,
+      "last_updated": "2026-08-01 04:59:18"
+    },
+    {
+      "product_id": "P0016",
+      "branch_id": "BR04",
+      "quantity": 15,
+      "reserved_qty": 1,
+      "last_updated": "2026-08-03 04:59:18"
+    },
+    {
+      "product_id": "P0017",
+      "branch_id": "BR01",
+      "quantity": 2,
+      "reserved_qty": 0,
+      "last_updated": "2026-07-27 04:59:18"
+    },
+    {
+      "product_id": "P0017",
+      "branch_id": "BR02",
+      "quantity": 0,
+      "reserved_qty": 0,
+      "last_updated": "2026-07-31 04:59:18"
+    },
+    {
+      "product_id": "P0017",
+      "branch_id": "BR03",
+      "quantity": 0,
+      "reserved_qty": 0,
+      "last_updated": "2026-07-27 04:59:18"
+    },
+    {
+      "product_id": "P0017",
+      "branch_id": "BR04",
+      "quantity": 8,
+      "reserved_qty": 0,
+      "last_updated": "2026-08-05 04:59:18"
+    },
+    {
+      "product_id": "P0018",
+      "branch_id": "BR01",
+      "quantity": 0,
+      "reserved_qty": 0,
+      "last_updated": "2026-08-03 04:59:18"
+    },
+    {
+      "product_id": "P0018",
+      "branch_id": "BR02",
+      "quantity": 0,
+      "reserved_qty": 0,
+      "last_updated": "2026-08-04 04:59:18"
+    },
+    {
+      "product_id": "P0018",
+      "branch_id": "BR03",
+      "quantity": 2,
+      "reserved_qty": 1,
+      "last_updated": "2026-08-04 04:59:18"
+    },
+    {
+      "product_id": "P0018",
+      "branch_id": "BR04",
+      "quantity": 10,
+      "reserved_qty": 0,
+      "last_updated": "2026-07-27 04:59:18"
+    },
+    {
+      "product_id": "P0019",
+      "branch_id": "BR01",
+      "quantity": 10,
+      "reserved_qty": 0,
+      "last_updated": "2026-07-30 04:59:18"
+    },
+    {
+      "product_id": "P0019",
+      "branch_id": "BR02",
+      "quantity": 10,
+      "reserved_qty": 0,
+      "last_updated": "2026-08-01 04:59:18"
+    },
+    {
+      "product_id": "P0019",
+      "branch_id": "BR03",
+      "quantity": 15,
+      "reserved_qty": 0,
+      "last_updated": "2026-08-02 04:59:18"
+    },
+    {
+      "product_id": "P0019",
+      "branch_id": "BR04",
+      "quantity": 1,
+      "reserved_qty": 0,
+      "last_updated": "2026-07-29 04:59:18"
+    },
+    {
+      "product_id": "P0020",
+      "branch_id": "BR01",
+      "quantity": 20,
+      "reserved_qty": 0,
+      "last_updated": "2026-08-05 04:59:18"
+    },
+    {
+      "product_id": "P0020",
+      "branch_id": "BR02",
+      "quantity": 10,
+      "reserved_qty": 0,
+      "last_updated": "2026-08-04 04:59:18"
+    },
+    {
+      "product_id": "P0020",
+      "branch_id": "BR03",
+      "quantity": 8,
+      "reserved_qty": 0,
+      "last_updated": "2026-08-03 04:59:18"
+    },
+    {
+      "product_id": "P0020",
+      "branch_id": "BR04",
+      "quantity": 0,
+      "reserved_qty": 0,
+      "last_updated": "2026-08-02 04:59:18"
+    },
+    {
+      "product_id": "P0021",
+      "branch_id": "BR01",
+      "quantity": 1,
+      "reserved_qty": 1,
+      "last_updated": "2026-07-28 04:59:18"
+    },
+    {
+      "product_id": "P0021",
+      "branch_id": "BR02",
+      "quantity": 10,
+      "reserved_qty": 0,
+      "last_updated": "2026-07-26 04:59:18"
+    },
+    {
+      "product_id": "P0021",
+      "branch_id": "BR03",
+      "quantity": 3,
+      "reserved_qty": 0,
+      "last_updated": "2026-08-03 04:59:18"
+    },
+    {
+      "product_id": "P0021",
+      "branch_id": "BR04",
+      "quantity": 0,
+      "reserved_qty": 0,
+      "last_updated": "2026-07-28 04:59:18"
+    },
+    {
+      "product_id": "P0022",
+      "branch_id": "BR01",
+      "quantity": 3,
+      "reserved_qty": 0,
+      "last_updated": "2026-07-31 04:59:18"
+    },
+    {
+      "product_id": "P0022",
+      "branch_id": "BR02",
+      "quantity": 12,
+      "reserved_qty": 0,
+      "last_updated": "2026-07-28 04:59:18"
+    },
+    {
+      "product_id": "P0022",
+      "branch_id": "BR03",
+      "quantity": 0,
+      "reserved_qty": 0,
+      "last_updated": "2026-08-04 04:59:18"
+    },
+    {
+      "product_id": "P0022",
+      "branch_id": "BR04",
+      "quantity": 3,
+      "reserved_qty": 0,
+      "last_updated": "2026-08-05 04:59:18"
+    },
+    {
+      "product_id": "P0023",
+      "branch_id": "BR01",
+      "quantity": 1,
+      "reserved_qty": 0,
+      "last_updated": "2026-08-03 04:59:18"
+    },
+    {
+      "product_id": "P0023",
+      "branch_id": "BR02",
+      "quantity": 8,
+      "reserved_qty": 1,
+      "last_updated": "2026-07-28 04:59:18"
+    },
+    {
+      "product_id": "P0023",
+      "branch_id": "BR03",
+      "quantity": 0,
+      "reserved_qty": 0,
+      "last_updated": "2026-08-04 04:59:18"
+    },
+    {
+      "product_id": "P0023",
+      "branch_id": "BR04",
+      "quantity": 15,
+      "reserved_qty": 0,
+      "last_updated": "2026-07-28 04:59:18"
+    },
+    {
+      "product_id": "P0024",
+      "branch_id": "BR01",
+      "quantity": 0,
+      "reserved_qty": 0,
+      "last_updated": "2026-07-31 04:59:18"
+    },
+    {
+      "product_id": "P0024",
+      "branch_id": "BR02",
+      "quantity": 1,
+      "reserved_qty": 1,
+      "last_updated": "2026-08-03 04:59:18"
+    },
+    {
+      "product_id": "P0024",
+      "branch_id": "BR03",
+      "quantity": 0,
+      "reserved_qty": 0,
+      "last_updated": "2026-07-31 04:59:18"
+    },
+    {
+      "product_id": "P0024",
+      "branch_id": "BR04",
+      "quantity": 20,
+      "reserved_qty": 0,
+      "last_updated": "2026-07-31 04:59:18"
+    },
+    {
+      "product_id": "P0025",
+      "branch_id": "BR01",
+      "quantity": 2,
+      "reserved_qty": 0,
+      "last_updated": "2026-07-31 04:59:18"
+    },
+    {
+      "product_id": "P0025",
+      "branch_id": "BR02",
+      "quantity": 5,
+      "reserved_qty": 0,
+      "last_updated": "2026-08-02 04:59:18"
+    },
+    {
+      "product_id": "P0025",
+      "branch_id": "BR03",
+      "quantity": 20,
+      "reserved_qty": 0,
+      "last_updated": "2026-07-30 04:59:18"
+    },
+    {
+      "product_id": "P0025",
+      "branch_id": "BR04",
+      "quantity": 0,
+      "reserved_qty": 0,
+      "last_updated": "2026-07-31 04:59:18"
+    }
+  ],
+  "sales": [
+    {
+      "sale_id": "S00001",
+      "product_id": "P0001",
+      "branch_id": "BR02",
+      "sale_date": "2026-07-05",
+      "sale_price": 8507,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00002",
+      "product_id": "P0001",
+      "branch_id": "BR01",
+      "sale_date": "2026-06-18",
+      "sale_price": 8817,
+      "qty": 2
+    },
+    {
+      "sale_id": "S00003",
+      "product_id": "P0001",
+      "branch_id": "BR04",
+      "sale_date": "2026-07-08",
+      "sale_price": 8473,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00004",
+      "product_id": "P0002",
+      "branch_id": "BR02",
+      "sale_date": "2026-08-05",
+      "sale_price": 8220,
+      "qty": 2
+    },
+    {
+      "sale_id": "S00005",
+      "product_id": "P0002",
+      "branch_id": "BR01",
+      "sale_date": "2026-07-26",
+      "sale_price": 8025,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00006",
+      "product_id": "P0002",
+      "branch_id": "BR04",
+      "sale_date": "2026-07-25",
+      "sale_price": 8211,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00007",
+      "product_id": "P0002",
+      "branch_id": "BR01",
+      "sale_date": "2026-07-06",
+      "sale_price": 7897,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00008",
+      "product_id": "P0002",
+      "branch_id": "BR03",
+      "sale_date": "2026-07-31",
+      "sale_price": 8180,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00009",
+      "product_id": "P0002",
+      "branch_id": "BR04",
+      "sale_date": "2026-08-02",
+      "sale_price": 8188,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00010",
+      "product_id": "P0002",
+      "branch_id": "BR03",
+      "sale_date": "2026-07-13",
+      "sale_price": 8285,
+      "qty": 2
+    },
+    {
+      "sale_id": "S00011",
+      "product_id": "P0002",
+      "branch_id": "BR01",
+      "sale_date": "2026-07-17",
+      "sale_price": 8144,
+      "qty": 2
+    },
+    {
+      "sale_id": "S00012",
+      "product_id": "P0002",
+      "branch_id": "BR02",
+      "sale_date": "2026-07-08",
+      "sale_price": 8178,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00013",
+      "product_id": "P0002",
+      "branch_id": "BR04",
+      "sale_date": "2026-08-04",
+      "sale_price": 8245,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00014",
+      "product_id": "P0002",
+      "branch_id": "BR02",
+      "sale_date": "2026-07-20",
+      "sale_price": 8356,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00015",
+      "product_id": "P0003",
+      "branch_id": "BR01",
+      "sale_date": "2026-07-16",
+      "sale_price": 6927,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00016",
+      "product_id": "P0003",
+      "branch_id": "BR04",
+      "sale_date": "2026-07-04",
+      "sale_price": 6746,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00017",
+      "product_id": "P0003",
+      "branch_id": "BR03",
+      "sale_date": "2026-07-11",
+      "sale_price": 6944,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00018",
+      "product_id": "P0003",
+      "branch_id": "BR04",
+      "sale_date": "2026-07-24",
+      "sale_price": 6803,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00019",
+      "product_id": "P0003",
+      "branch_id": "BR03",
+      "sale_date": "2026-06-27",
+      "sale_price": 6879,
+      "qty": 2
+    },
+    {
+      "sale_id": "S00020",
+      "product_id": "P0003",
+      "branch_id": "BR01",
+      "sale_date": "2026-07-01",
+      "sale_price": 7014,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00021",
+      "product_id": "P0003",
+      "branch_id": "BR04",
+      "sale_date": "2026-07-18",
+      "sale_price": 6695,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00022",
+      "product_id": "P0004",
+      "branch_id": "BR02",
+      "sale_date": "2026-07-04",
+      "sale_price": 8144,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00023",
+      "product_id": "P0004",
+      "branch_id": "BR03",
+      "sale_date": "2026-07-18",
+      "sale_price": 8165,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00024",
+      "product_id": "P0004",
+      "branch_id": "BR02",
+      "sale_date": "2026-06-14",
+      "sale_price": 8389,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00025",
+      "product_id": "P0004",
+      "branch_id": "BR02",
+      "sale_date": "2026-07-22",
+      "sale_price": 8314,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00026",
+      "product_id": "P0005",
+      "branch_id": "BR01",
+      "sale_date": "2026-07-17",
+      "sale_price": 15635,
+      "qty": 2
+    },
+    {
+      "sale_id": "S00027",
+      "product_id": "P0005",
+      "branch_id": "BR02",
+      "sale_date": "2026-07-23",
+      "sale_price": 15653,
+      "qty": 2
+    },
+    {
+      "sale_id": "S00028",
+      "product_id": "P0005",
+      "branch_id": "BR02",
+      "sale_date": "2026-07-21",
+      "sale_price": 15404,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00029",
+      "product_id": "P0005",
+      "branch_id": "BR01",
+      "sale_date": "2026-07-16",
+      "sale_price": 15552,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00030",
+      "product_id": "P0005",
+      "branch_id": "BR02",
+      "sale_date": "2026-07-12",
+      "sale_price": 15417,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00031",
+      "product_id": "P0005",
+      "branch_id": "BR04",
+      "sale_date": "2026-07-11",
+      "sale_price": 15690,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00032",
+      "product_id": "P0005",
+      "branch_id": "BR01",
+      "sale_date": "2026-07-19",
+      "sale_price": 15327,
+      "qty": 2
+    },
+    {
+      "sale_id": "S00033",
+      "product_id": "P0005",
+      "branch_id": "BR04",
+      "sale_date": "2026-08-01",
+      "sale_price": 15610,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00034",
+      "product_id": "P0005",
+      "branch_id": "BR04",
+      "sale_date": "2026-07-06",
+      "sale_price": 15586,
+      "qty": 2
+    },
+    {
+      "sale_id": "S00035",
+      "product_id": "P0005",
+      "branch_id": "BR04",
+      "sale_date": "2026-07-10",
+      "sale_price": 15664,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00036",
+      "product_id": "P0005",
+      "branch_id": "BR04",
+      "sale_date": "2026-07-13",
+      "sale_price": 15641,
+      "qty": 2
+    },
+    {
+      "sale_id": "S00037",
+      "product_id": "P0005",
+      "branch_id": "BR02",
+      "sale_date": "2026-07-28",
+      "sale_price": 15584,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00038",
+      "product_id": "P0005",
+      "branch_id": "BR04",
+      "sale_date": "2026-07-12",
+      "sale_price": 15598,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00039",
+      "product_id": "P0005",
+      "branch_id": "BR01",
+      "sale_date": "2026-07-28",
+      "sale_price": 15425,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00040",
+      "product_id": "P0005",
+      "branch_id": "BR03",
+      "sale_date": "2026-07-29",
+      "sale_price": 15339,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00041",
+      "product_id": "P0006",
+      "branch_id": "BR04",
+      "sale_date": "2026-07-17",
+      "sale_price": 6850,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00042",
+      "product_id": "P0007",
+      "branch_id": "BR04",
+      "sale_date": "2026-06-14",
+      "sale_price": 12184,
+      "qty": 2
+    },
+    {
+      "sale_id": "S00043",
+      "product_id": "P0007",
+      "branch_id": "BR04",
+      "sale_date": "2026-07-29",
+      "sale_price": 12120,
+      "qty": 2
+    },
+    {
+      "sale_id": "S00044",
+      "product_id": "P0010",
+      "branch_id": "BR03",
+      "sale_date": "2026-06-05",
+      "sale_price": 8942,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00045",
+      "product_id": "P0010",
+      "branch_id": "BR04",
+      "sale_date": "2026-06-17",
+      "sale_price": 9375,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00046",
+      "product_id": "P0011",
+      "branch_id": "BR04",
+      "sale_date": "2026-07-05",
+      "sale_price": 7743,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00047",
+      "product_id": "P0011",
+      "branch_id": "BR04",
+      "sale_date": "2026-06-24",
+      "sale_price": 8076,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00048",
+      "product_id": "P0011",
+      "branch_id": "BR02",
+      "sale_date": "2026-06-13",
+      "sale_price": 7968,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00049",
+      "product_id": "P0011",
+      "branch_id": "BR01",
+      "sale_date": "2026-06-08",
+      "sale_price": 7930,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00050",
+      "product_id": "P0011",
+      "branch_id": "BR02",
+      "sale_date": "2026-06-25",
+      "sale_price": 7948,
+      "qty": 2
+    },
+    {
+      "sale_id": "S00051",
+      "product_id": "P0011",
+      "branch_id": "BR03",
+      "sale_date": "2026-07-25",
+      "sale_price": 7754,
+      "qty": 2
+    },
+    {
+      "sale_id": "S00052",
+      "product_id": "P0012",
+      "branch_id": "BR04",
+      "sale_date": "2026-07-26",
+      "sale_price": 6804,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00053",
+      "product_id": "P0012",
+      "branch_id": "BR04",
+      "sale_date": "2026-07-12",
+      "sale_price": 6902,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00054",
+      "product_id": "P0012",
+      "branch_id": "BR04",
+      "sale_date": "2026-07-10",
+      "sale_price": 6456,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00055",
+      "product_id": "P0012",
+      "branch_id": "BR01",
+      "sale_date": "2026-07-13",
+      "sale_price": 6691,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00056",
+      "product_id": "P0012",
+      "branch_id": "BR01",
+      "sale_date": "2026-07-29",
+      "sale_price": 6747,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00057",
+      "product_id": "P0012",
+      "branch_id": "BR02",
+      "sale_date": "2026-07-12",
+      "sale_price": 6430,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00058",
+      "product_id": "P0012",
+      "branch_id": "BR02",
+      "sale_date": "2026-07-10",
+      "sale_price": 6425,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00059",
+      "product_id": "P0012",
+      "branch_id": "BR01",
+      "sale_date": "2026-08-01",
+      "sale_price": 6657,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00060",
+      "product_id": "P0012",
+      "branch_id": "BR03",
+      "sale_date": "2026-07-22",
+      "sale_price": 6773,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00061",
+      "product_id": "P0012",
+      "branch_id": "BR01",
+      "sale_date": "2026-07-31",
+      "sale_price": 6725,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00062",
+      "product_id": "P0012",
+      "branch_id": "BR01",
+      "sale_date": "2026-07-06",
+      "sale_price": 6574,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00063",
+      "product_id": "P0012",
+      "branch_id": "BR04",
+      "sale_date": "2026-07-07",
+      "sale_price": 6574,
+      "qty": 2
+    },
+    {
+      "sale_id": "S00064",
+      "product_id": "P0012",
+      "branch_id": "BR02",
+      "sale_date": "2026-07-06",
+      "sale_price": 6781,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00065",
+      "product_id": "P0013",
+      "branch_id": "BR03",
+      "sale_date": "2026-06-22",
+      "sale_price": 6393,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00066",
+      "product_id": "P0013",
+      "branch_id": "BR01",
+      "sale_date": "2026-06-16",
+      "sale_price": 6287,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00067",
+      "product_id": "P0013",
+      "branch_id": "BR03",
+      "sale_date": "2026-07-02",
+      "sale_price": 6217,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00068",
+      "product_id": "P0014",
+      "branch_id": "BR04",
+      "sale_date": "2026-06-12",
+      "sale_price": 5914,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00069",
+      "product_id": "P0014",
+      "branch_id": "BR03",
+      "sale_date": "2026-07-09",
+      "sale_price": 6190,
+      "qty": 2
+    },
+    {
+      "sale_id": "S00070",
+      "product_id": "P0014",
+      "branch_id": "BR04",
+      "sale_date": "2026-06-21",
+      "sale_price": 5777,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00071",
+      "product_id": "P0015",
+      "branch_id": "BR04",
+      "sale_date": "2026-05-29",
+      "sale_price": 11322,
+      "qty": 2
+    },
+    {
+      "sale_id": "S00072",
+      "product_id": "P0015",
+      "branch_id": "BR03",
+      "sale_date": "2026-06-11",
+      "sale_price": 11348,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00073",
+      "product_id": "P0015",
+      "branch_id": "BR01",
+      "sale_date": "2026-07-05",
+      "sale_price": 11351,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00074",
+      "product_id": "P0016",
+      "branch_id": "BR04",
+      "sale_date": "2026-05-25",
+      "sale_price": 6211,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00075",
+      "product_id": "P0016",
+      "branch_id": "BR03",
+      "sale_date": "2026-08-02",
+      "sale_price": 6152,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00076",
+      "product_id": "P0017",
+      "branch_id": "BR03",
+      "sale_date": "2026-07-15",
+      "sale_price": 9756,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00077",
+      "product_id": "P0017",
+      "branch_id": "BR02",
+      "sale_date": "2026-07-03",
+      "sale_price": 10098,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00078",
+      "product_id": "P0017",
+      "branch_id": "BR04",
+      "sale_date": "2026-07-21",
+      "sale_price": 9981,
+      "qty": 2
+    },
+    {
+      "sale_id": "S00079",
+      "product_id": "P0017",
+      "branch_id": "BR02",
+      "sale_date": "2026-07-01",
+      "sale_price": 10001,
+      "qty": 2
+    },
+    {
+      "sale_id": "S00080",
+      "product_id": "P0017",
+      "branch_id": "BR04",
+      "sale_date": "2026-06-25",
+      "sale_price": 9977,
+      "qty": 2
+    },
+    {
+      "sale_id": "S00081",
+      "product_id": "P0018",
+      "branch_id": "BR02",
+      "sale_date": "2026-07-08",
+      "sale_price": 6752,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00082",
+      "product_id": "P0018",
+      "branch_id": "BR03",
+      "sale_date": "2026-05-13",
+      "sale_price": 6842,
+      "qty": 2
+    },
+    {
+      "sale_id": "S00083",
+      "product_id": "P0019",
+      "branch_id": "BR03",
+      "sale_date": "2026-06-19",
+      "sale_price": 8183,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00084",
+      "product_id": "P0019",
+      "branch_id": "BR03",
+      "sale_date": "2026-06-22",
+      "sale_price": 8134,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00085",
+      "product_id": "P0019",
+      "branch_id": "BR01",
+      "sale_date": "2026-07-20",
+      "sale_price": 8020,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00086",
+      "product_id": "P0019",
+      "branch_id": "BR02",
+      "sale_date": "2026-07-16",
+      "sale_price": 7963,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00087",
+      "product_id": "P0019",
+      "branch_id": "BR04",
+      "sale_date": "2026-07-23",
+      "sale_price": 8280,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00088",
+      "product_id": "P0019",
+      "branch_id": "BR03",
+      "sale_date": "2026-06-20",
+      "sale_price": 8203,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00089",
+      "product_id": "P0020",
+      "branch_id": "BR03",
+      "sale_date": "2026-06-20",
+      "sale_price": 7844,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00090",
+      "product_id": "P0021",
+      "branch_id": "BR01",
+      "sale_date": "2026-07-31",
+      "sale_price": 7677,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00091",
+      "product_id": "P0021",
+      "branch_id": "BR02",
+      "sale_date": "2026-05-08",
+      "sale_price": 7662,
+      "qty": 2
+    },
+    {
+      "sale_id": "S00092",
+      "product_id": "P0022",
+      "branch_id": "BR04",
+      "sale_date": "2026-07-27",
+      "sale_price": 6002,
+      "qty": 2
+    },
+    {
+      "sale_id": "S00093",
+      "product_id": "P0022",
+      "branch_id": "BR01",
+      "sale_date": "2026-07-26",
+      "sale_price": 5856,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00094",
+      "product_id": "P0022",
+      "branch_id": "BR04",
+      "sale_date": "2026-07-06",
+      "sale_price": 6203,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00095",
+      "product_id": "P0022",
+      "branch_id": "BR04",
+      "sale_date": "2026-07-10",
+      "sale_price": 5795,
+      "qty": 2
+    },
+    {
+      "sale_id": "S00096",
+      "product_id": "P0022",
+      "branch_id": "BR01",
+      "sale_date": "2026-08-03",
+      "sale_price": 6057,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00097",
+      "product_id": "P0022",
+      "branch_id": "BR03",
+      "sale_date": "2026-08-01",
+      "sale_price": 6177,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00098",
+      "product_id": "P0022",
+      "branch_id": "BR04",
+      "sale_date": "2026-07-29",
+      "sale_price": 5822,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00099",
+      "product_id": "P0022",
+      "branch_id": "BR04",
+      "sale_date": "2026-07-12",
+      "sale_price": 6029,
+      "qty": 2
+    },
+    {
+      "sale_id": "S00100",
+      "product_id": "P0022",
+      "branch_id": "BR03",
+      "sale_date": "2026-07-07",
+      "sale_price": 5988,
+      "qty": 2
+    },
+    {
+      "sale_id": "S00101",
+      "product_id": "P0022",
+      "branch_id": "BR01",
+      "sale_date": "2026-07-27",
+      "sale_price": 6053,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00102",
+      "product_id": "P0022",
+      "branch_id": "BR02",
+      "sale_date": "2026-07-06",
+      "sale_price": 6152,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00103",
+      "product_id": "P0022",
+      "branch_id": "BR01",
+      "sale_date": "2026-07-28",
+      "sale_price": 6100,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00104",
+      "product_id": "P0022",
+      "branch_id": "BR01",
+      "sale_date": "2026-07-29",
+      "sale_price": 5850,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00105",
+      "product_id": "P0022",
+      "branch_id": "BR04",
+      "sale_date": "2026-08-05",
+      "sale_price": 5971,
+      "qty": 2
+    },
+    {
+      "sale_id": "S00106",
+      "product_id": "P0022",
+      "branch_id": "BR02",
+      "sale_date": "2026-07-27",
+      "sale_price": 5778,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00107",
+      "product_id": "P0022",
+      "branch_id": "BR04",
+      "sale_date": "2026-07-14",
+      "sale_price": 5906,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00108",
+      "product_id": "P0022",
+      "branch_id": "BR03",
+      "sale_date": "2026-07-15",
+      "sale_price": 5881,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00109",
+      "product_id": "P0023",
+      "branch_id": "BR03",
+      "sale_date": "2026-06-25",
+      "sale_price": 5483,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00110",
+      "product_id": "P0023",
+      "branch_id": "BR02",
+      "sale_date": "2026-08-01",
+      "sale_price": 5437,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00111",
+      "product_id": "P0023",
+      "branch_id": "BR03",
+      "sale_date": "2026-06-28",
+      "sale_price": 5790,
+      "qty": 2
+    },
+    {
+      "sale_id": "S00112",
+      "product_id": "P0023",
+      "branch_id": "BR03",
+      "sale_date": "2026-07-29",
+      "sale_price": 5646,
+      "qty": 2
+    },
+    {
+      "sale_id": "S00113",
+      "product_id": "P0025",
+      "branch_id": "BR04",
+      "sale_date": "2026-06-28",
+      "sale_price": 6818,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00114",
+      "product_id": "P0025",
+      "branch_id": "BR01",
+      "sale_date": "2026-06-28",
+      "sale_price": 6926,
+      "qty": 1
+    },
+    {
+      "sale_id": "S00115",
+      "product_id": "P0025",
+      "branch_id": "BR01",
+      "sale_date": "2026-07-22",
+      "sale_price": 7290,
+      "qty": 1
+    }
+  ]
+}

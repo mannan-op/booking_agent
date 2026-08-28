@@ -1,0 +1,71 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: voltops
+      POSTGRES_PASSWORD: voltops
+      POSTGRES_DB: voltops
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./workflows/postgres-schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ./docker/postgres/02-seed.sql:/docker-entrypoint-initdb.d/02-seed.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U voltops -d voltops"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  mock-ims:
+    build:
+      context: ./workflows/mock-middleware-api
+      dockerfile: Dockerfile
+    environment:
+      IMS_MIDDLEWARE_API_KEY: demo-secret-key
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/v1/health')",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  n8n:
+    image: n8nio/n8n:latest
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mock-ims:
+        condition: service_healthy
+    ports:
+      - "5678:5678"
+    environment:
+      WEBHOOK_URL: http://localhost:5678/
+      N8N_HOST: localhost
+      N8N_PORT: "5678"
+      N8N_PROTOCOL: http
+      N8N_SECURE_COOKIE: "false"
+      N8N_ENCRYPTION_KEY: ${N8N_ENCRYPTION_KEY:-voltops-demo-n8n-key-change-me}
+      N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS: "false"
+      N8N_RUNNERS_ENABLED: "true"
+      OFFLOAD_MANUAL_EXECUTIONS_TO_WORKERS: "false"
+      GENERIC_TIMEZONE: Asia/Karachi
+      TZ: Asia/Karachi
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GROQ_API_KEY: ${GROQ_API_KEY:-}
+    volumes:
+      - n8n_data:/home/src_yankee/.n8n
+      - ./workflows:/import/workflows:ro
+      - ./docker/n8n/entrypoint.sh:/entrypoint.sh:ro
+    entrypoint: ["/bin/sh", "/entrypoint.sh"]
+
+volumes:
+  postgres_data:
+  n8n_data:

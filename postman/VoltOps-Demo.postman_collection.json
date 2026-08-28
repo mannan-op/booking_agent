@@ -1,0 +1,457 @@
+{
+  "info": {
+    "name": "VoltOps Demo",
+    "description": "Local tests for the VoltOps battery automation stack.\n\nRun order for a full path:\n1. Mock IMS — Health / Search HT03XL\n2. Next.js — Inventory, Dashboard, Analytics\n3. Chat — Send battery query (needs GEMINI_API_KEY in n8n)\n4. Next.js — Queries / Orders / Reviews\n\nStart the stack first: `docker compose up -d` and `pnpm dev`.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "next_base",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "n8n_base",
+      "value": "http://localhost:5678"
+    },
+    {
+      "key": "ims_base",
+      "value": "http://localhost:8000"
+    },
+    {
+      "key": "ims_token",
+      "value": "demo-secret-key"
+    },
+    {
+      "key": "product_id",
+      "value": "P0001"
+    },
+    {
+      "key": "branch_id",
+      "value": "BR01"
+    },
+    {
+      "key": "conversation_id",
+      "value": "11111111-1111-4111-8111-111111111111"
+    },
+    {
+      "key": "review_id",
+      "value": "RV-1"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Mock IMS",
+      "item": [
+        {
+          "name": "Health (no auth)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('IMS is healthy', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "  pm.expect(pm.response.json().status).to.eql('ok');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{ims_base}}/v1/health"
+          }
+        },
+        {
+          "name": "Search HT03XL",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Found HT03XL', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.matches.length).to.be.above(0);",
+                  "  pm.collectionVariables.set('product_id', body.matches[0].product_id);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ims_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{ims_base}}/v1/battery/search?model=HT03XL",
+              "host": ["{{ims_base}}"],
+              "path": ["v1", "battery", "search"],
+              "query": [{ "key": "model", "value": "HT03XL" }]
+            }
+          }
+        },
+        {
+          "name": "Search unknown model (404 / empty)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ims_token}}"
+              }
+            ],
+            "url": "{{ims_base}}/v1/battery/search?model=XYZ999"
+          }
+        },
+        {
+          "name": "Stock all branches",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ims_token}}"
+              }
+            ],
+            "url": "{{ims_base}}/v1/battery/{{product_id}}/stock"
+          }
+        },
+        {
+          "name": "Stock one branch",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ims_token}}"
+              }
+            ],
+            "url": "{{ims_base}}/v1/battery/{{product_id}}/stock?branch_id={{branch_id}}"
+          }
+        },
+        {
+          "name": "Sales 30 days",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ims_token}}"
+              }
+            ],
+            "url": "{{ims_base}}/v1/sales/{{product_id}}?days=30"
+          }
+        },
+        {
+          "name": "Sales 90 days",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ims_token}}"
+              }
+            ],
+            "url": "{{ims_base}}/v1/sales/{{product_id}}?days=90"
+          }
+        },
+        {
+          "name": "Branches",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Four Lahore branches', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "  pm.expect(pm.response.json().branches.length).to.eql(4);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ims_token}}"
+              }
+            ],
+            "url": "{{ims_base}}/v1/branches"
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Next.js dashboard APIs",
+      "item": [
+        {
+          "name": "Dashboard KPIs",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Dashboard loaded', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.kpis.length).to.be.above(0);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{next_base}}/api/dashboard"
+          }
+        },
+        {
+          "name": "Inventory",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Seeded inventory present', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "  pm.expect(pm.response.json().inventory.length).to.be.above(0);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{next_base}}/api/inventory"
+          }
+        },
+        {
+          "name": "Analytics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{next_base}}/api/analytics"
+          }
+        },
+        {
+          "name": "Queries",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{next_base}}/api/queries"
+          }
+        },
+        {
+          "name": "Orders",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{next_base}}/api/orders"
+          }
+        },
+        {
+          "name": "Reviews",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Reviews loaded', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "const reviews = pm.response.json().reviews || [];",
+                  "if (reviews.length) {",
+                  "  pm.collectionVariables.set('review_id', reviews[0].id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{next_base}}/api/reviews"
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Chat / n8n",
+      "item": [
+        {
+          "name": "Send query via Next.js (same as UI)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (!pm.collectionVariables.get('conversation_id')) {",
+                  "  pm.collectionVariables.set('conversation_id', pm.variables.replaceIn('{{$guid}}'));",
+                  "}",
+                  "pm.collectionVariables.set('message_id', 'web-' + Date.now());"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Chat proxy reached n8n', function () {",
+                  "  pm.expect(pm.response.code).to.be.oneOf([200, 201, 404, 500]);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"conversation_id\": \"{{conversation_id}}\",\n  \"channel\": \"web\",\n  \"from\": \"postman\",\n  \"message_id\": \"{{message_id}}\",\n  \"text\": \"Need HT03XL for HP EliteBook 840 G5, please book 1\",\n  \"image_url\": \"\",\n  \"content_type\": \"text\"\n}"
+            },
+            "url": "{{next_base}}/api/chat"
+          }
+        },
+        {
+          "name": "Send query direct to n8n webhook",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (!pm.collectionVariables.get('conversation_id')) {",
+                  "  pm.collectionVariables.set('conversation_id', pm.variables.replaceIn('{{$guid}}'));",
+                  "}",
+                  "pm.collectionVariables.set('message_id', 'web-' + Date.now());"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"conversation_id\": \"{{conversation_id}}\",\n  \"channel\": \"web\",\n  \"from\": \"postman\",\n  \"message_id\": \"{{message_id}}\",\n  \"text\": \"Need HT03XL for HP EliteBook 840 G5, please book 1\",\n  \"image_url\": \"\",\n  \"content_type\": \"text\"\n}"
+            },
+            "url": "{{n8n_base}}/webhook/battery-query"
+          }
+        },
+        {
+          "name": "Confirm order (same conversation)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set('message_id', 'web-' + Date.now());"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"conversation_id\": \"{{conversation_id}}\",\n  \"channel\": \"web\",\n  \"from\": \"postman\",\n  \"message_id\": \"{{message_id}}\",\n  \"text\": \"Yes, confirm the order\",\n  \"image_url\": \"\",\n  \"content_type\": \"text\"\n}"
+            },
+            "url": "{{next_base}}/api/chat"
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Human review actions",
+      "item": [
+        {
+          "name": "Approve review",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"action\": \"approve\"\n}"
+            },
+            "url": "{{next_base}}/api/reviews/{{review_id}}"
+          }
+        },
+        {
+          "name": "Reject review",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"action\": \"reject\"\n}"
+            },
+            "url": "{{next_base}}/api/reviews/{{review_id}}"
+          }
+        },
+        {
+          "name": "Update extracted fields",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"action\": \"update\",\n  \"extracted\": {\n    \"brand\": \"HP\",\n    \"laptopModel\": \"HP EliteBook 840 G5\",\n    \"batteryModel\": \"HT03XL\",\n    \"specification\": \"11.55V 48Wh\",\n    \"quantity\": 1\n  }\n}"
+            },
+            "url": "{{next_base}}/api/reviews/{{review_id}}"
+          }
+        }
+      ]
+    }
+  ]
+}

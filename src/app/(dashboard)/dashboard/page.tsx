@@ -23,9 +23,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { useSimulatedLoading } from "@/hooks/use-simulated-loading"
+import { useLiveData } from "@/hooks/use-live-data"
 import { formatDate } from "@/lib/format"
-import { kpiMetrics, recentOrders, recentQueries } from "@/lib/mock-data"
+import type { CustomerQuery, KpiMetric, Order } from "@/types"
 
 const kpiIcons = {
   queries: MessageSquareText,
@@ -36,11 +36,19 @@ const kpiIcons = {
 } as const
 
 export default function DashboardPage() {
-  const isLoading = useSimulatedLoading()
+  const { data, isLoading, error } = useLiveData<{
+    kpis: KpiMetric[]
+    recentQueries: CustomerQuery[]
+    recentOrders: Order[]
+  }>("/api/dashboard")
 
   if (isLoading) {
     return <PageSkeleton />
   }
+
+  const kpiMetrics = data?.kpis ?? []
+  const recentQueries = data?.recentQueries ?? []
+  const recentOrders = data?.recentOrders ?? []
 
   return (
     <div className="space-y-6">
@@ -48,12 +56,13 @@ export default function DashboardPage() {
         title="Operations overview"
         description="Live snapshot of customer queries, fulfillment, and battery inventory."
       />
+      {error ? <p className="text-sm text-destructive">{error}</p> : null}
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
         {kpiMetrics.map((metric) => (
           <KpiCard
             key={metric.id}
             metric={metric}
-            icon={kpiIcons[metric.id as keyof typeof kpiIcons]}
+            icon={kpiIcons[metric.id as keyof typeof kpiIcons] ?? Inbox}
           />
         ))}
       </section>
@@ -103,30 +112,39 @@ export default function DashboardPage() {
             <CardTitle>Recent orders</CardTitle>
           </CardHeader>
           <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Order ID</TableHead>
-                  <TableHead>Customer</TableHead>
-                  <TableHead>Battery Model</TableHead>
-                  <TableHead>Branch</TableHead>
-                  <TableHead>Status</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {recentOrders.map((order) => (
-                  <TableRow key={order.id}>
-                    <TableCell className="font-medium">{order.id}</TableCell>
-                    <TableCell>{order.customerName}</TableCell>
-                    <TableCell>{order.batteryModel}</TableCell>
-                    <TableCell>{order.branch}</TableCell>
-                    <TableCell>
-                      <StatusBadge status={order.status} />
-                    </TableCell>
+            {recentOrders.length === 0 ? (
+              <EmptyState
+                icon={ShoppingCart}
+                title="No orders yet"
+                description="Confirmed chat orders will appear here."
+                className="py-10"
+              />
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Order ID</TableHead>
+                    <TableHead>Customer</TableHead>
+                    <TableHead>Battery Model</TableHead>
+                    <TableHead>Branch</TableHead>
+                    <TableHead>Status</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {recentOrders.map((order) => (
+                    <TableRow key={order.id}>
+                      <TableCell className="font-medium">{order.id}</TableCell>
+                      <TableCell>{order.customerName}</TableCell>
+                      <TableCell>{order.batteryModel}</TableCell>
+                      <TableCell>{order.branch}</TableCell>
+                      <TableCell>
+                        <StatusBadge status={order.status} />
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
           </CardContent>
         </Card>
       </section>
