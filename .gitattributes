@@ -1,0 +1,5 @@
+# Force LF for scripts and SQL so they run correctly inside Linux containers
+*.sh text eol=lf
+*.sql text eol=lf
+Dockerfile text eol=lf
+.dockerignore text eol=lf

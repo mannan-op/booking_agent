@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import type { ReactNode } from "react"
 import { Geist_Mono, Outfit, Syne } from "next/font/google"
 
 import { Providers } from "@/components/providers"
@@ -30,7 +31,7 @@ export const metadata: Metadata = {
     "Premium operations console for AI laptop-battery sales automation.",
 }
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html
       lang="en"

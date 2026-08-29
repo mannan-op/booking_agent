@@ -126,26 +126,29 @@ export default function SettingsPage() {
         <TabsContent value="whatsapp" className="mt-4">
           <Card>
             <CardHeader>
-              <CardTitle>WhatsApp via WaAPI</CardTitle>
+              <CardTitle>WhatsApp via Cloud API (Meta)</CardTitle>
               <CardDescription>
-                Customer chat lives on WhatsApp. Link a number in WaAPI, then put the instance credentials in `.env.local`.
+                Customer chat lives on WhatsApp. Put the Meta Cloud API credentials in `.env.local`.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3 text-sm text-muted-foreground">
               <p>
-                Required: <span className="font-medium text-foreground">WAAPI_TOKEN</span>,{" "}
-                <span className="font-medium text-foreground">WAAPI_INSTANCE_ID</span>,{" "}
-                <span className="font-medium text-foreground">WAAPI_WEBHOOK_SECRET</span>, and a public{" "}
+                Required: <span className="font-medium text-foreground">WHATSAPP_ACCESS_TOKEN</span>,{" "}
+                <span className="font-medium text-foreground">WHATSAPP_PHONE_NUMBER_ID</span>,{" "}
+                <span className="font-medium text-foreground">WHATSAPP_APP_SECRET</span> and{" "}
+                <span className="font-medium text-foreground">WHATSAPP_VERIFY_TOKEN</span>, plus a public{" "}
                 <span className="font-medium text-foreground">PUBLIC_APP_URL</span>.
               </p>
               <p>
-                WaAPI webhook URL is <span className="font-medium text-foreground">/api/whatsapp/webhook?token=…</span>.
-                Subscribe to the <span className="font-medium text-foreground">message</span> event only. Inbound
-                threads show up under Customer Queries.
+                Meta webhook URL is <span className="font-medium text-foreground">/api/whatsapp/webhook</span>{" "}
+                (subscribe to the <span className="font-medium text-foreground">messages</span> field). Inbound
+                threads show up under Customer Queries. Cloud API replies within the 24-hour customer-service
+                window automatically.
               </p>
               <p>
-                WaAPI trial accounts can only send replies to the phone number they registered. Message the linked
-                WhatsApp from that same trial number, or the reply will be rejected.
+                Legacy WaAPI (QR scan) is also supported — add <span className="font-medium text-foreground">WAAPI_TOKEN</span>,{" "}
+                <span className="font-medium text-foreground">WAAPI_INSTANCE_ID</span> and{" "}
+                <span className="font-medium text-foreground">WAAPI_WEBHOOK_SECRET</span> instead.
               </p>
             </CardContent>
           </Card>

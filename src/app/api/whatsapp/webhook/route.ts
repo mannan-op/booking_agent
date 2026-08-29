@@ -6,6 +6,7 @@ import {
   getWhatsAppConfig,
   isWaapiPayload,
   parseWhatsAppInbound,
+  resolveMetaMediaUrl,
   sendWhatsAppText,
   syncWaapiWebhook,
   verifyWaapiWebhookToken,
@@ -123,13 +124,17 @@ async function processInbound(
     if (!takeInboundOnce(message.messageId, fingerprint)) {
       continue
     }
+    let imageUrl = message.imageUrl
+    if (imageUrl && !imageUrl.startsWith("http")) {
+      imageUrl = await resolveMetaMediaUrl(imageUrl)
+    }
     const result = await sendToN8nIntake({
       conversation_id: conversationIdForPhone(message.from),
       channel: "whatsapp",
       from: message.from,
       message_id: message.messageId,
       text: message.text,
-      image_url: message.imageUrl,
+      image_url: imageUrl,
       content_type: message.contentType,
     })
 
@@ -142,7 +147,7 @@ async function processInbound(
       : customerFallback
     const config = getWhatsAppConfig()
     if (!config.sendConfigured) {
-      console.error("WhatsApp reply skipped: set WAAPI_TOKEN and WAAPI_INSTANCE_ID.")
+      console.error("WhatsApp reply skipped: no send provider configured (set WAAPI_* or WHATSAPP_*).")
       continue
     }
     try {

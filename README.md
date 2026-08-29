@@ -35,9 +35,27 @@ pnpm dev
 - **Analytics** — 90-day sales history
 - **Customer Queries** — inbound WhatsApp conversations after n8n intake
 
-## WhatsApp (customer chat)
+## WhatsApp (customer chat, Cloud API)
 
-The dashboard is for operators. Customers talk on WhatsApp. This prototype uses [WaAPI](https://waapi.app/) so you can scan a QR with a normal WhatsApp number instead of Meta Cloud API.
+The dashboard is for operators. Customers talk on WhatsApp. This uses the **WhatsApp Cloud API (Meta)** with a business number — full automation: inbound → n8n → auto-reply.
+
+1. Create a Meta app / WhatsApp Business Account with a business phone number, then copy:
+   - `WHATSAPP_ACCESS_TOKEN` (permanent/System User token)
+   - `WHATSAPP_PHONE_NUMBER_ID`
+   - `WHATSAPP_APP_SECRET`
+   - `WHATSAPP_VERIFY_TOKEN` (any random string you choose)
+2. Put these in `.env.local` (see `.env.example`), plus `PUBLIC_APP_URL`. Restart `pnpm dev`.
+3. If n8n needs to reach the UI for image analysis, set `PUBLIC_APP_URL` to the public HTTPS origin (for a local demo, `ngrok http 3000`).
+4. In your Meta Webhook config, point the app webhook at:
+   `https://your-public-https-host/api/whatsapp/webhook`
+   and subscribe to the **messages** field. The first Meta verification call hits `GET /api/whatsapp/webhook?hub.mode=subscribe&hub.verify_token=<WHATSAPP_VERIFY_TOKEN>&hub.challenge=...` and is answered automatically.
+5. Message the business number from a customer phone. Operators see the thread on **Customer Queries**.
+
+> Cloud API only allows free-form replies within the 24-hour customer-service window. A customer must message first before your auto-reply sends.
+
+## WhatsApp (customer chat) — legacy WaAPI option
+
+Prototype alternative that scans a QR with a normal WhatsApp number (uses [WaAPI](https://waapi.app/)) instead of Meta Cloud API:
 
 1. Create an instance at [waapi.app](https://waapi.app/), scan the QR from WhatsApp, and copy the instance ID plus API token.
 2. Put these in `.env.local` (and restart `pnpm dev`):
@@ -51,7 +69,7 @@ PUBLIC_APP_URL=https://your-public-https-host
 
 3. Local webhooks need HTTPS. Example: `ngrok http 3000`, then set `PUBLIC_APP_URL` to the ngrok origin.
 4. In the WaAPI instance, set webhook URL to `https://your-public-https-host/api/whatsapp/webhook?token=WAAPI_WEBHOOK_SECRET` and subscribe to **message** only.
-5. Message the linked number from a customer phone. Operators see the thread on **Customer Queries**.
+5. Message the linked number from a customer phone. Operators see the thread on **Customer Queries**. WaAPI trial accounts can only reply to the registered number.
 
 If n8n replies fail, confirm Workflow 1 is active and `GEMINI_API_KEY` is loaded in the n8n container (`docker compose up -d --force-recreate n8n`).
 

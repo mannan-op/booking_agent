@@ -23,6 +23,9 @@ export function getWhatsAppConfig() {
   const waapiConfigured = Boolean(waapiToken && waapiInstanceId)
   const metaSendConfigured = Boolean(accessToken && phoneNumberId)
 
+  const metaReceiveConfigured =
+    (Boolean(verifyToken) && Boolean(appSecret)) || metaSendConfigured
+
   return {
     provider: waapiConfigured ? ("waapi" as const) : metaSendConfigured ? ("meta" as const) : ("none" as const),
     waapiToken,
@@ -34,7 +37,7 @@ export function getWhatsAppConfig() {
     appSecret,
     graphVersion,
     publicAppUrl,
-    receiveConfigured: waapiConfigured || Boolean(verifyToken),
+    receiveConfigured: waapiConfigured || metaReceiveConfigured,
     sendConfigured: waapiConfigured || metaSendConfigured,
     webhookPath: "/api/whatsapp/webhook",
     webhookUrl: publicAppUrl ? `${publicAppUrl}/api/whatsapp/webhook` : "",
@@ -306,8 +309,8 @@ export async function sendWhatsAppText(to: string, body: string, replyToMessageI
   }
 
   if (config.provider === "meta") {
-    for (const chunk of chunks) {
-      await sendMetaText(to, chunk)
+    for (const [index, chunk] of chunks.entries()) {
+      await sendMetaText(to, chunk, index === 0 ? replyToMessageId : undefined)
     }
     return
   }
@@ -363,8 +366,48 @@ async function postWaapiMessage(to: string, message: string, replyToMessageId?: 
   return { ok: false as const, error: waapiErrorMessage(errorBody, response.status) }
 }
 
-async function sendMetaText(to: string, body: string) {
+export async function resolveMetaMediaUrl(mediaId: string): Promise<string> {
   const config = getWhatsAppConfig()
+  if (!mediaId) {
+    return ""
+  }
+  if (mediaId.startsWith("http://") || mediaId.startsWith("https://")) {
+    return mediaId
+  }
+  if (config.provider !== "meta") {
+    return mediaId
+  }
+  try {
+    const response = await fetch(
+      `https://graph.facebook.com/${config.graphVersion}/${mediaId}`,
+      { headers: { Authorization: `Bearer ${config.accessToken}` } },
+    )
+    if (!response.ok) {
+      console.error("Meta media resolve failed", response.status)
+      return ""
+    }
+    const data = (await response.json()) as { url?: string }
+    return data.url ?? ""
+  } catch (error) {
+    console.error(
+      "Meta media resolve error",
+      error instanceof Error ? error.message : error,
+    )
+    return ""
+  }
+}
+
+async function sendMetaText(to: string, body: string, replyToMessageId?: string) {
+  const config = getWhatsAppConfig()
+  const payload: Record<string, unknown> = {
+    messaging_product: "whatsapp",
+    to,
+    type: "text",
+    text: { preview_url: false, body },
+  }
+  if (replyToMessageId) {
+    payload.context = { message_id: replyToMessageId }
+  }
   const response = await fetch(
     `https://graph.facebook.com/${config.graphVersion}/${config.phoneNumberId}/messages`,
     {
@@ -373,12 +416,7 @@ async function sendMetaText(to: string, body: string) {
         Authorization: `Bearer ${config.accessToken}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        messaging_product: "whatsapp",
-        to,
-        type: "text",
-        text: { preview_url: false, body },
-      }),
+      body: JSON.stringify(payload),
     },
   )
   if (!response.ok) {
