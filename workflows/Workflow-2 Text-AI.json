@@ -14,7 +14,7 @@
     },
     {
       "parameters": {
-        "modelName": "models/gemini-2.5-flash-lite",
+        "modelName": "models/gemini-3.5-flash",
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",

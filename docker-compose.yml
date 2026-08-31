@@ -47,7 +47,8 @@ services:
     ports:
       - "5678:5678"
     environment:
-      WEBHOOK_URL: http://localhost:5678/
+      WEBHOOK_URL: ${N8N_PUBLIC_URL:-http://localhost:5678/}
+      N8N_WEBHOOK_URL: ${N8N_PUBLIC_URL:-http://localhost:5678/}
       N8N_HOST: localhost
       N8N_PORT: "5678"
       N8N_PROTOCOL: http
@@ -60,6 +61,11 @@ services:
       TZ: Asia/Karachi
       GEMINI_API_KEY: ${GEMINI_API_KEY:-}
       GROQ_API_KEY: ${GROQ_API_KEY:-}
+      WHATSAPP_ACCESS_TOKEN: ${WHATSAPP_ACCESS_TOKEN:-}
+      WHATSAPP_BUSINESS_ACCOUNT_ID: ${WHATSAPP_BUSINESS_ACCOUNT_ID:-}
+      WHATSAPP_PHONE_NUMBER_ID: ${WHATSAPP_PHONE_NUMBER_ID:-}
+      WHATSAPP_APP_ID: ${WHATSAPP_APP_ID:-}
+      WHATSAPP_APP_SECRET: ${WHATSAPP_APP_SECRET:-}
     volumes:
       - n8n_data:/home/src_yankee/.n8n
       - ./workflows:/import/workflows:ro

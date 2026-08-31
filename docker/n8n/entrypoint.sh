@@ -34,6 +34,24 @@ cat > /tmp/credentials.json <<EOF
     "data": {
       "apiKey": "${GROQ_API_KEY:-}"
     }
+  },
+  {
+    "id": "wAppApiVoltOps01",
+    "name": "WhatsApp Business Cloud account",
+    "type": "whatsAppApi",
+    "data": {
+      "accessToken": "${WHATSAPP_ACCESS_TOKEN:-}",
+      "businessAccountId": "${WHATSAPP_BUSINESS_ACCOUNT_ID:-}"
+    }
+  },
+  {
+    "id": "wAppTrigVoltOps1",
+    "name": "WhatsApp OAuth account",
+    "type": "whatsAppTriggerApi",
+    "data": {
+      "clientId": "${WHATSAPP_APP_ID:-}",
+      "clientSecret": "${WHATSAPP_APP_SECRET:-}"
+    }
   }
 ]
 EOF

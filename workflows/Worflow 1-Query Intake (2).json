@@ -3,56 +3,11 @@
   "nodes": [
     {
       "parameters": {
-        "assignments": {
-          "assignments": [
-            {
-              "id": "conv-id-from-body",
-              "name": "conversation_id",
-              "value": "={{ $json.body.conversation_id }}",
-              "type": "string"
-            },
-            {
-              "id": "de2c14f2-f019-4e0e-a11b-05b7bc14d465",
-              "name": "channel",
-              "value": "={{ $json.body.channel }}",
-              "type": "string"
-            },
-            {
-              "id": "6cda254d-4f66-4f50-9cee-4b70c67dcb4e",
-              "name": "from",
-              "value": "={{ $json.body.from }}",
-              "type": "string"
-            },
-            {
-              "id": "830b13cf-454e-4b00-99c4-1c775052d4ac",
-              "name": "message_id",
-              "value": "={{ $json.body.message_id }}",
-              "type": "string"
-            },
-            {
-              "id": "80b2685a-4eb0-4133-b18f-ebd5122fad16",
-              "name": "text",
-              "value": "={{ $json.body.text }}",
-              "type": "string"
-            },
-            {
-              "id": "397193b8-499c-4f94-8c6f-b51dea602ec9",
-              "name": "image_url",
-              "value": "={{ $json.body.image_url }}",
-              "type": "string"
-            },
-            {
-              "id": "b5b79993-5899-49f6-8fef-29e71012aaca",
-              "name": "content_type",
-              "value": "={{ $json.body.content_type || ($json.body.image_url ? 'image' : 'text') }}",
-              "type": "string"
-            }
-          ]
-        },
-        "options": {}
+        "mode": "runOnceForEachItem",
+        "jsCode": "const json = $json;\nconst body = json.body && typeof json.body === 'object' ? json.body : {};\nconst message = Array.isArray(json.messages) ? json.messages[0] : null;\nconst image = message && message.image && typeof message.image === 'object' ? message.image : {};\nconst textFromMeta = (message && message.text && message.text.body) || image.caption || '';\nconst from = body.from || (message && message.from) || '';\nconst messageId = body.message_id || (message && message.id) || '';\nconst text = body.text || textFromMeta || '';\nconst imageUrl = body.image_url || image.id || image.link || '';\nconst contentType = (body.content_type === 'image' || Boolean(imageUrl) || (message && message.type === 'image'))\n  ? 'image'\n  : (body.content_type || 'text');\nreturn {\n  json: {\n    conversation_id: body.conversation_id || json.conversation_id || '',\n    channel: body.channel || 'whatsapp',\n    from,\n    message_id: messageId,\n    text,\n    image_url: imageUrl,\n    content_type: contentType,\n    source: message ? 'whatsapp' : 'webhook',\n  },\n};"
       },
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 3.5,
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
       "position": [
         -848,
         96
@@ -123,7 +78,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "INSERT INTO messages (\n    message_id,\n    conversation_id,\n    direction,\n    content_type,\n    raw_text,\n    image_url,\n    created_at\n)\nVALUES (\n    '{{ $('03 \u2014 Prepare Idempotency').item.json.message_id }}',\n    '{{ $('03 \u2014 Prepare Idempotency').item.json.conversation_id }}',\n    'inbound',\n    '{{ $('03 \u2014 Prepare Idempotency').item.json.content_type }}',\n    '{{ $('03 \u2014 Prepare Idempotency').item.json.text }}',\n    NULL,\n    NOW()\n)\nRETURNING *;",
+        "query": "INSERT INTO messages (\n    message_id,\n    conversation_id,\n    direction,\n    content_type,\n    raw_text,\n    image_url,\n    created_at\n)\nVALUES (\n    '{{ $('03 \u2014 Prepare Idempotency').item.json.message_id }}',\n    '{{ $('03 \u2014 Prepare Idempotency').item.json.conversation_id }}',\n    'inbound',\n    '{{ $('03 \u2014 Prepare Idempotency').item.json.content_type }}',\n    '{{ $('03 \u2014 Prepare Idempotency').item.json.text }}',\n    '{{ $('03 \u2014 Prepare Idempotency').item.json.image_url }}',\n    NOW()\n)\nRETURNING *;",
         "options": {}
       },
       "type": "n8n-nodes-base.postgres",
@@ -504,6 +459,154 @@
       ],
       "id": "wf1-call-wf3",
       "name": "Call 'Workflow-3 Vision-AI'"
+    },
+    {
+      "parameters": {
+        "updates": [
+          "messages"
+        ],
+        "options": {
+          "messageStatusUpdates": []
+        }
+      },
+      "type": "n8n-nodes-base.whatsAppTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1072,
+        280
+      ],
+      "id": "wf1-whatsapp-trigger",
+      "name": "WhatsApp Trigger",
+      "webhookId": "voltops-wf1-whatsapp-trigger",
+      "disabled": true,
+      "credentials": {
+        "whatsAppTriggerApi": {
+          "id": "wAppTrigVoltOps1",
+          "name": "WhatsApp OAuth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "wf1-source-is-whatsapp",
+              "leftValue": "={{ $('02 \u2014 Normalize Input').item.json.source }}",
+              "rightValue": "whatsapp",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        944,
+        192
+      ],
+      "id": "wf1-reply-on-whatsapp",
+      "name": "Reply on WhatsApp?"
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "phoneNumberId": "={{ $env.WHATSAPP_PHONE_NUMBER_ID }}",
+        "recipientPhoneNumber": "={{ $('03 \u2014 Prepare Idempotency').item.json.from }}",
+        "messageType": "text",
+        "textBody": "={{ $json.message || $json.reply || $json.text || 'We received your message and are checking battery stock.' }}",
+        "additionalFields": {
+          "previewUrl": false
+        }
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1.1,
+      "position": [
+        1168,
+        112
+      ],
+      "id": "wf1-whatsapp-send",
+      "name": "Send WhatsApp Reply",
+      "webhookId": "voltops-wf1-whatsapp-send",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "wAppApiVoltOps01",
+          "name": "WhatsApp Business Cloud account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "wf1-return-message",
+              "name": "message",
+              "value": "={{ $json.message || $json.reply || $json.text || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "wf1-return-status",
+              "name": "status",
+              "value": "={{ $json.status || 'success' }}",
+              "type": "string"
+            },
+            {
+              "id": "wf1-return-reply-type",
+              "name": "reply_type",
+              "value": "={{ $json.reply_type || 'quotation' }}",
+              "type": "string"
+            },
+            {
+              "id": "wf1-return-confidence",
+              "name": "confidence",
+              "value": "={{ Number($json.confidence ?? $json.output?.confidence ?? 0) }}",
+              "type": "number"
+            },
+            {
+              "id": "wf1-return-model",
+              "name": "model",
+              "value": "={{ $json.model || $json.likely_model || $json.output?.likely_model || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "wf1-return-likely-model",
+              "name": "likely_model",
+              "value": "={{ $json.likely_model || $json.model || $json.output?.likely_model || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "wf1-return-extracted",
+              "name": "extracted_text",
+              "value": "={{ $json.extracted_text || $json.output?.extracted_text || '' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1168,
+        304
+      ],
+      "id": "wf1-return-customer-reply",
+      "name": "Return Customer Reply"
     }
   ],
   "pinData": {},
@@ -604,6 +707,57 @@
         [
           {
             "node": "Call 'Workflow-3 Vision-AI'",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "WhatsApp Trigger": {
+      "main": [
+        [
+          {
+            "node": "02 \u2014 Normalize Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call 'WorkFlow-7B Intent Classification'": {
+      "main": [
+        [
+          {
+            "node": "Reply on WhatsApp?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call 'Workflow-3 Vision-AI'": {
+      "main": [
+        [
+          {
+            "node": "Reply on WhatsApp?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reply on WhatsApp?": {
+      "main": [
+        [
+          {
+            "node": "Send WhatsApp Reply",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Return Customer Reply",
             "type": "main",
             "index": 0
           }

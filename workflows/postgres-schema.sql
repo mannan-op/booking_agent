@@ -49,6 +49,8 @@ CREATE TABLE IF NOT EXISTS conversations (
   channel TEXT NOT NULL,
   customer_phone TEXT,
   status TEXT NOT NULL DEFAULT 'open',
+  detected_laptop TEXT,
+  detected_battery TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 

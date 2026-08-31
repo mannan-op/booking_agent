@@ -14,7 +14,7 @@
     },
     {
       "parameters": {
-        "modelName": "models/gemini-2.5-flash",
+        "modelName": "models/gemini-3.6-flash",
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
@@ -144,7 +144,7 @@
             {
               "id": "87fa8b15-a260-4db3-a775-e3eb6caf38bc",
               "name": "image_url",
-              "value": "={{ $json.image_url || 'https://itonline.pk/wp-content/uploads/2026/08/LENOVO-T14-GEN-3-BATTERY-1-300x300.jpeg' }}",
+              "value": "={{ $json.image_url }}",
               "type": "string"
             }
           ]
@@ -163,6 +163,15 @@
     {
       "parameters": {
         "url": "={{ $json.image_url }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.WHATSAPP_ACCESS_TOKEN }}"
+            }
+          ]
+        },
         "options": {
           "response": {
             "response": {
@@ -295,6 +304,32 @@
       ],
       "id": "wf3-exec-trigger-voltops",
       "name": "When Executed by WF1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first().json || {};\nlet vision = {};\ntry {\n  vision = $('Parse Code in js').first().json.output || {};\n} catch (e) {\n  vision = item.output || {};\n}\nlet picture = {};\ntry {\n  picture = $('Picture of battery given by user').first().json || {};\n} catch (e) {\n  picture = item;\n}\nconst confidence = Number(vision.confidence);\nconst model = vision.likely_model || null;\nconst extracted = vision.extracted_text || null;\nconst safeConfidence = Number.isFinite(confidence) ? confidence : 0;\nconst reply = \"Thanks for the photo. We could not read the battery model clearly, so a teammate will review it and reply shortly.\";\nreturn [{\n  json: {\n    conversation_id: picture.conversation_id || item.conversation_id || \"\",\n    channel: picture.channel || item.channel || \"whatsapp\",\n    text: picture.text || item.text || \"\",\n    image_url: picture.image_url || item.image_url || \"\",\n    confidence: safeConfidence,\n    likely_model: model,\n    model,\n    extracted_text: extracted,\n    notes: vision.notes || \"Photo was not clear enough to identify the battery model.\",\n    reply_type: \"human_review\",\n    status: \"escalated\",\n    message: reply,\n    reply\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1696,
+        368
+      ],
+      "id": "wf3-vision-unclear",
+      "name": "Vision Unclear Result"
+    },
+    {
+      "parameters": {
+        "jsCode": "const ims = $input.first().json || {};\nlet vision = {};\ntry {\n  vision = $('Parse Code in js').first().json.output || {};\n} catch (e) {\n  vision = ims.output || {};\n}\nconst confidence = Number(vision.confidence ?? ims.confidence);\nconst model = vision.likely_model || ims.likely_model || ims.model || null;\nconst extracted = vision.extracted_text || ims.extracted_text || null;\nconst reply = ims.message || ims.reply || ims.text || \"We found a matching battery from your photo.\";\nreturn [{\n  json: {\n    ...ims,\n    confidence: Number.isFinite(confidence) ? confidence : 0,\n    likely_model: model,\n    model,\n    extracted_text: extracted,\n    reply_type: ims.reply_type || \"quotation\",\n    status: ims.status || \"success\",\n    message: reply,\n    reply\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1920,
+        16
+      ],
+      "id": "wf3-vision-success",
+      "name": "Vision Success Result"
     }
   ],
   "pinData": {},
@@ -365,7 +400,7 @@
         ],
         [
           {
-            "node": "To Human Review",
+            "node": "Vision Unclear Result",
             "type": "main",
             "index": 0
           }
@@ -394,7 +429,7 @@
         ],
         [
           {
-            "node": "No Operation, do nothing",
+            "node": "Vision Unclear Result",
             "type": "main",
             "index": 0
           }
@@ -406,6 +441,17 @@
         [
           {
             "node": "Picture of battery given by user",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call 'WorkFlow-5 IMS Search'": {
+      "main": [
+        [
+          {
+            "node": "Vision Success Result",
             "type": "main",
             "index": 0
           }
